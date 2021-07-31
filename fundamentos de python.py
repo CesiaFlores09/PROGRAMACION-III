@@ -46,3 +46,31 @@ num1 = float(input("Num1: "))
 num2 = float(input("Num2: "))
 resp= suma(num1, num2)
 print(resp)
+
+num1 = int(input("Num1: "))
+num2 = int(input("Num2: "))
+print("Los numero", str(num1), ",", str(num2), " son iguales: ", str(num1==num2) )
+
+def convertirFC(f):
+     c = (f-32)*5/9
+     return c
+
+f = float(input("F: "))
+print("F: ", str(f), " a celsius: ", str( convertirFC(f) ))
+
+numHrs = int(input("Num. de Hrs trabajadas: "))
+valorHr = float(input("Valor por hr: "))
+
+sueldo = numHrs*valorHr*30
+print("Sueldo: ", sueldo)
+
+def calcularSueldo(numHrs, valorHr):
+   hrsExtras = 0
+   if( numHrs>8 ):
+      hrsExtras = numHrs-8
+   sueldo = (8*valorHr + hrsExtras*valorHr*2)*30
+   return sueldo
+
+numHrs = int(input("Num. hrs trabajadas: "))
+valorHr = float(input("Valor x hr: "))
+print("Sueldo: ", str(calcularSueldo(numHrs, valorHr)))
