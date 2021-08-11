@@ -74,3 +74,52 @@ def calcularSueldo(numHrs, valorHr):
 numHrs = int(input("Num. hrs trabajadas: "))
 valorHr = float(input("Valor x hr: "))
 print("Sueldo: ", str(calcularSueldo(numHrs, valorHr)))
+
+suma = lambda num1, num2: num1+num2
+num1 = float(input("Ingrese el numero 1: "))
+num2 = float(input("Ingrese el numero 2: "))
+print("La suma es: ", suma(num1, num2))
+
+conversion = lambda f:(f-32)*5/9
+f = float(input("Grados Fahrenheit: "))
+print("Grados Fahrenheit: ", f, "a Grados Celsius: ", conversion(f))
+
+cuadrado = lambda n:n**2
+n = int(input("N: "))
+print("N: ", n, "al cuadrado es: ", cuadrado(n) )
+
+cubo = lambda n:n**3
+n = int(input("N: "))
+print("N: ", n, "al cubo es: ", cubo(n) )
+
+exp = lambda n,e:n**e
+n = int(input("N: "))
+e = int(input("Exponente: "))
+print(n, " elevado al exp", e, "es: ", exp(n,e) )
+
+lista = [5,7,10,2,1]
+resp = list(map(lambda n:n*2, lista))
+print(resp)
+
+gfdepto = [85,58,105]
+cdepto = list(map(conversion, gfdepto))
+print("Los grados F: ", gfdepto, "en Celsius es: ", cdepto)
+
+resp=list(map(cuadrado, lista))
+print("La lista ", lista, "el cuadrado es: ", resp)
+
+resp=list(map(cuadrado, lista))
+print("La lista ", lista, "el cuadrado es: ", resp)
+
+resp = list(filter(lambda n:n<=2,lista))
+print("Los numeros <= 2 de la lista ", lista, "son: ", resp)
+
+resp = list(filter(lambda n:n%2==0, lista))
+print("Los numeros pares de la lista : ", lista, "son: ", resp )
+
+resp = list(filter(lambda n:n%2!=0, lista))
+print("Los numeros impares de la lista : ", lista, "son: ", resp )
+
+from functools import reduce
+resp = reduce(lambda x,y:x+y, lista)
+print("La suma de la lsita ", lista,"es: ", resp, "la media es: ", resp/len(lista))
