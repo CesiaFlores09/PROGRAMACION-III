@@ -123,3 +123,25 @@ print("Los numeros impares de la lista : ", lista, "son: ", resp )
 from functools import reduce
 resp = reduce(lambda x,y:x+y, lista)
 print("La suma de la lsita ", lista,"es: ", resp, "la media es: ", resp/len(lista))
+
+persona = "USIS002020", "Cesia Flores", "Zacatecoluca", "3421-2345", "florescsia@gmail.com"
+print(persona)
+
+nombre= "Cesia Flores"
+print(nombre[0:5], nombre.count("e"))
+
+name= ["C", "E", "S", "I", "A", "F", "L", "O", "R", "E", "S"]
+print(name, name[0:5], name.count("E"), name.index("E"))
+
+person= ["USIS002020", "Cesia Flores", "Direccion: Zacatecoluca", "3421-2345", "florescsia@gmail.com", 34, 78.8]
+print(person)
+person.append("python")
+person.insert(2, "Depto: La paz")
+person[6]=7.8
+leng= person.pop()
+print(person, leng)
+
+nEnteros= [2,6,7,8,9]
+nOrdenados=sorted(nEnteros, reverse=True)
+numReverse=list(reversed(nEnteros))
+print("Lista desordenada: ", nEnteros, "Lista Ordenada: ", nOrdenados, "numeros al reves: ", numReverse)
