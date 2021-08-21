@@ -145,3 +145,67 @@ nEnteros= [2,6,7,8,9]
 nOrdenados=sorted(nEnteros, reverse=True)
 numReverse=list(reversed(nEnteros))
 print("Lista desordenada: ", nEnteros, "Lista Ordenada: ", nOrdenados, "numeros al reves: ", numReverse)
+
+me=["USIS002020", "Cesia Flores", "Zacatecoluca",503,"7034-7835","usis00202@ugb.edu.sv",["Progra I", "Progra II",[6,8,9,4], "Progra III"]]
+print( me[0][0:4], me[6][2][2], me[6][2][0])
+
+matriz=[
+        [1,2,3],
+        [3,5,6],
+        [5,7,6]
+]
+print(matriz)
+
+matriz=[
+        [1,5,3,5],
+        [3,4,4],
+        [5,4],
+        [6,7,8,9,2],
+        7
+]
+print(matriz)
+
+lenguajes={"Progra I":"VB","Progra II":"JAVA","Progra III":"Python"}
+print(lenguajes["Progra III"])
+
+mi={
+    "codigo":"USISOO2O20",
+    "nombre":"Cesia Flores",
+    "direccion":{
+        "pais":{
+            "codigo":"503",
+            "nombre":"El Salvador",
+            "codigoiso":"sv",
+            "continente":{
+                "nombre":"C.A"
+                
+            }
+        },
+
+    "departamento":"La Paz",
+    "municipio":"Santiago Nonualco",
+    },
+    "tels":{
+        "oficiona":"2345-689",
+        "casa":"2349-0876",
+        "celular":"5648-9847"
+    }
+
+}
+print(mi["codigo"], mi["nombre"], mi["tels"], mi["direccion"]["pais"]["nombre"], mi["direccion"]["departamento"])
+
+copia=mi.copy()
+print(copia)
+
+pais=copia.get("direccion")["pais"]["nombre"]
+print(pais)
+nombre= mi.get("direccion").get("pais").get("codigo")
+esqueleto= dict.fromkeys(mi,"")
+print(nombre, esqueleto)
+
+items=list(mi.items())
+print(items)
+
+claves=list(mi.keys())
+print(claves, claves[0])
+
