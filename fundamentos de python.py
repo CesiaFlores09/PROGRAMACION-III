@@ -209,3 +209,26 @@ print(items)
 claves=list(mi.keys())
 print(claves, claves[0])
 
+edad= int(input("Ingrese su edad: "))
+if edad<2:
+  print("Eres un bebe")
+elif edad<12:
+  print("Eres un niño")
+elif edad<18:
+  print("Eres un adolescente")
+elif edad<=55:
+  print("Eres joven")
+elif edad<=65:
+  print("Eres un adulto, un señor")
+elif edad<=80:
+  print("Eres un adulto mayor")
+elif edad<130:
+  print("Larga vida")
+else:
+ print("Error en la edad")
+
+ n= int(input("Tabla: "))
+i=1
+while i<=10:
+  print(n,"X",i,"=",n*i)
+  i+=1
