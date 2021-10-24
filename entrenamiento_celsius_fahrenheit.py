@@ -22,7 +22,7 @@ modelo_c_f.compile(optimizer=tf.keras.optimizers.Adam(1),loss='mean_squared_erro
 hisotiral_c_f = modelo_c_f.fit(c,f, epochs=525, verbose=0)
 
 #convertir de metros a yardas
-f= modelo_c_f.predict([10])
+f= modelo_c_f.predict([900])
 print("Conversion de celsius a Farehrenheit: ",f)
 
 
