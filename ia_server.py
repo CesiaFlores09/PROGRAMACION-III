@@ -46,6 +46,14 @@ class servidorBasico(BaseHTTPRequestHandler):
         data = self.rfile.read(content_length)
         data = data.decode('utf-8')
         print(data)
+
+        prediccion = modelo_c_f.predict([data])
+        print("Predicción:", prediccion)
+        
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(str(prediccion[0][0]).encode())
  
        
 print("Iniciando el servidor de Python")
