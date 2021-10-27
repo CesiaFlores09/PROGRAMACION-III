@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA que aprenda a leer numeros con Python</title>
+    <style>
+        div {
+            text-align: center;
+        }
+        canvas{
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="numero" width="28" height="28"></canvas>
+        <div id="resultado"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        /*document.addEventListener('DOMContentLoaded', e=>{
+            alert("Hola desde JS");
+        });*/
+        $(document).ready(e=>{
+            let canvas = $("#numero")[0], //document.getElementById("numero")
+                cdx = canvas.getContext("2d"),
+                onmousedown = false;
+
+            canvas.onmousedown = e=>{
+                onmousedown = true;
+                
+                cdx.clearRect(0,0,canvas.width,canvas.height);
+                cdx.beginPath();
+
+                cdx.moveTo(e.offsetX,e.offsetY);
+                return false;
+            };
+            canvas.onmousemove = e=>{
+                if(onmousedown){
+                    cdx.lineTo(e.offsetX,e.offsetY);
+                    cdx.stroke();
+                }
+            };
+            canvas.onmouseup = e=>{
+                onmousedown = false;
+
+                let pixeles = [];
+                for(i=0; i<28;i++){
+                    for(j=0; j<28; j++){
+                        let imgData = cdx.getImageData(i,j,1,1).data,
+                            valor = (imgData[3]/255*100/100).toFixed(2);
+                        pixeles.push(valor);
+                    }
+                }
+                pixeles = pixeles.join(",");
+                $.post("http://localhost:8000",pixeles,respuesta=>{
+                    $("#resultado").text(respuesta);
+                });
+            };
+        });
+    </script>
+</body>
+</html>
