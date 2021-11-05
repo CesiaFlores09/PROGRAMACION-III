@@ -16,13 +16,13 @@
     <div class="container">
         <div class="row">
             <div class="col col-md-6">
-                <h3 class="text-dark">APP DE CLIENTE</h3>
+                <h3 class="text-purple">APP PARA REGISTRO DE CLIENTE</h3>
             </div>
         </div>
         <div class="row">
             <div class="col col-md-6">
                 <div class="card text-white bg-dark mb-3">
-                    <div class="card-header">REGISTRO DE CLIENTE</div>
+                    <div class="card-header"style="text-align: center;">REGISTRO DE CLIENTES</div>
                     <div class="card-body">
                         <form id="frmCliente" class="row g-2">
                             <div class="col-auto">
@@ -35,26 +35,26 @@
                             </div>
                             <div class="col-auto">
                                 <label for="txtTelefonoCliente" class="visually-hidden">Telefono</label>
-                                <input pattern="[0-9]{4}[-| ][0-9]{4}" required type="text" class="form-control" id="txtTelefonoCliente" placeholder="Telefono">
+                                <input pattern="/^\d]{3}$/[-| ][0-9]{4}[-| ][0-9]{4}" required type="text" class="form-control" id="txtTelefonoCliente" placeholder="Telefono">
                             </div>
                             <div class="col-auto">
                                 <label for="txtDireccionCliente" class="visually-hidden">Direccion</label>
-                                <input pattern="" required type="text" class="form-control" id="txtDireccionCliente" placeholder="Direccion">
+                                <input pattern="^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" required type="text" class="form-control" id="txtDireccionCliente" placeholder="Direccion">
                             </div>
                             <div class="col-auto">
                                 <label for="txtEmailCliente" class="visually-hidden">Email</label>
-                                <input pattern="" required type="text" class="form-control" id="txtEmailCliente" placeholder="Email">
+                                <input pattern="^[^@]+@[^@]+\.[a-zA-Z]{2,}$" required type="text" class="form-control" id="txtEmailCliente" placeholder="Email">
                             </div>
                             <div class="col-auto">
                                 <label for="txtSexoCliente" class="visually-hidden">Sexo</label>
-                                <input pattern="" required type="text" class="form-control" id="txtSexoCliente" placeholder="Sexo">
+                                <input pattern="[femenino|masculino|MASCULINO|FEMENINO]{8,9}" required type="text" class="form-control" id="txtSexoCliente" placeholder="Sexo">
                             </div>
                             <div class="col-auto">
                                 <label for="txtFechaNacimientoCliente" class="visually-hidden">Fecha Nacimiento</label>
-                                <input pattern="" required type="text" class="form-control" id="txtFechaNacimientoCliente" placeholder="Fecha Nacimiento">
+                                <input pattern="^(?:3[01]|[12][0-9]|0?[1-9])([\-/.])(0?[1-9]|1[1-2])\1\d{4}$" required type="text" class="form-control" id="txtFechaNacimientoCliente" placeholder="Fecha Nacimiento">
                             </div>
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-secondary mb-3">Registrar Cliente</button>
+                                <button type="submit" class="btn btn-success">Registrar Cliente</button>
                             </div>
                         </form>
                         <div class="row g-2">
