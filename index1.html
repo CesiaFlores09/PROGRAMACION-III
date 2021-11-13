@@ -28,11 +28,11 @@
                             </div>
                             <div class="col-auto">
                                 <label for="txtNombreAlumno" class="visually-hidden">Nombre</label>
-                                <input pattern="^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombreAlumno" placeholder="Nombre">
+                                <input pattern="^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,65})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,65})+)*$" type="text" class="form-control" id="txtNombreAlumno" placeholder="Nombre">
                             </div>
                             <div class="col-auto">
                                 <label for="txtTelefonoAlumno" class="visually-hidden">Telefono</label>
-                                <input pattern="/^\d]{3}$/[-| ][0-9]{4}[-| ][0-9]{4}" required type="text" class="form-control" id="txtTelefonoAlumno" placeholder="Telefono">
+                                <input pattern="[0-9]{4}[-| ][0-9]{4}" required type="text" class="form-control" id="txtTelefonoAlumno" placeholder="Telefono">
                             </div>
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-success">Registrar Alumno</button>
@@ -60,7 +60,7 @@
                     nombre = $("#txtNombreAlumno").val(),
                     telefono = $("#txtTelefonoAlumno").val(),
                     datos = {codigo,nombre,telefono};
-                $.post("http://localhost:3000",JSON.stringify(datos), 
+                $.post("http://localhost:3000/insertar",JSON.stringify(datos), 
                 (respuesta, status)=>{
                     
                 }, "json");
