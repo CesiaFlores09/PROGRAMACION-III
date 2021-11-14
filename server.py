@@ -5,14 +5,14 @@ import json
 
 class crud:
     def __init__(self):
-        self.conexion = mysql.connector.connect(user='root', password='',
+        self.conexion = mysql.connector.connect(user='root', password='flores',
                                            host='localhost', database='db_login')
         if self.conexion.is_connected():
             print('Conectado exitosamente a la base de datos')
         else:
             print('Error al conectar a la base de datos')
 
-    
+crud=crud()
 
 
 class servidorBasico(SimpleHTTPRequestHandler):
