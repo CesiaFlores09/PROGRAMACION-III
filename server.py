@@ -3,8 +3,8 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import mysql.connector
 import json
 import math
-import numpy as np
 from PIL import Image
+import numpy as np
 # Crear una ai que reconozca el rostro
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -125,13 +125,13 @@ class crud:
             return False
 
     def administrar_paciente(self, datos):
-        id=0
+        id = 0
         if datos['accion'] == 'nuevo':
             sql = 'INSERT INTO pacientes (idPaciente, DUI, NIT, Nombre, Sexo, Telefono, Correo, Direccion, FechaNacimiento, Foto) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
             id = self.auto_increment('pacientes')
             valores = (id, datos['dui'], datos['nit'], datos['nombre'], datos['sexo'], datos['telefono'], datos['correo'], datos['direccion'], datos['fechaNacimiento'], 'icon/pacientes/perfil'+str(id)+'.jpg')
             resultado = self.ejecutar_sql(sql, valores)
-            if resultado != False:
+            if resultado == True:
                 mensaje = 'Paciente registrado exitosamente'
             else:
                 mensaje = 'Error al registrar paciente'
@@ -144,14 +144,14 @@ class crud:
             else:
                 mensaje = 'Error al editar paciente'
 
-            datos = {'respuesta': resultado, 'mensaje': mensaje, 'id': id}
-            return datos
+        datos = {'respuesta': resultado, 'mensaje': mensaje, 'id': id}
+        return datos
 
-        def permitir_entrada(self, usuario):
-            # Se llamara a la ai para detectar el rostro
-            # Si el rostro es reconocido, se permitira el acceso
-            # Si no, se denegara el acceso
-            return True
+    def permitir_entrada(self, usuario):
+        # Se llamara a la ai para detectar el rostro
+        # Si el rostro es reconocido, se permitira el acceso
+        # Si no, se denegara el acceso
+        return True
 
 crud=crud()
 
@@ -191,7 +191,7 @@ class servidorBasico(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(json.dumps(dict(resultado=resultado)).encode('utf-8'))
-         
+
         elif self.path == '/admintir':
             content_length = int(self.headers['Content-Length'])
             data = self.rfile.read(content_length)
