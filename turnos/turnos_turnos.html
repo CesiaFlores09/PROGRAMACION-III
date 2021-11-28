@@ -1,0 +1,140 @@
+<div class="card text-white bg-secondary mb-3" id="cardTurno">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardTurno" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarTurno" data-accion="nuevo" data-codigoturno="0" class="row g-2">
+           <div class="form-group col-md-6">
+                <label for="txtNombreTurno">Nombre del Turno</label>
+                <input type="text" id="txtNombreTurno" name="txtNombreTurno" class="form-control form-control-sm" placeholder="Nombre del Turno">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtHoraInicio">Hora de Inicio</label>
+                <input type="time" id="txtHoraInicio" name="txtHoraInicio" class="form-control form-control-sm" placeholder="Hora de Inicio">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtHoraFin">Hora de Fin</label>
+                <input type="time" id="txtHoraFin" name="txtHoraFin" class="form-control form-control-sm" placeholder="Hora de Fin">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtDiaInicio">Día de Inicio</label>
+                <select id="txtDiaInicio" name="txtDiaInicio" class="form-control form-control-sm">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miercoles">Miercoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sabado">Sabado</option>
+                    <option value="Domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtDiaFin">Día de Fin</label>
+                <select id="txtDiaFin" name="txtDiaFin" class="form-control form-control-sm">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miercoles">Miercoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sabado">Sabado</option>
+                    <option value="Domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarTurno" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarTurno" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgTurno">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarTurno(turno){
+        $("#frmRegistrarTurno")
+            .data("accion","modificar")
+            .data("codigoturno",turno.idTurno);
+        $("#txtNombreTurno").val(turno.Nombre);
+        var horaInicio = turno.HoraInicio.split(":");
+        var horaFin = turno.HoraSalida.split(":");
+        var horaInicio24 = (parseInt(horaInicio[0]) + 12) % 24;
+        var horaFin24 = (parseInt(horaFin[0]) + 12) % 24;
+        $("#txtHoraInicio").val(horaInicio24 + ":" + horaInicio[1]);
+        $("#txtHoraFin").val(horaFin24 + ":" + horaFin[1]);
+        
+        $("#txtDiaInicio").val(turno.DiaInicio);
+        $("#txtDiaFin").val(turno.DiaSalida);
+        }
+      
+        function limpiarDatosTurno(turno){
+            $("#frmRegistrarTurno")
+                .data("accion","nuevo")
+                .data("codigoturno",0);
+            $("#txtNombreTurno").val("");
+            $("#txtHoraInicio").val("");
+            $("#txtHoraFin").val("");
+            $("#txtDiaInicio").val("");
+            $("#txtDiaFin").val("");
+        }
+
+            $(document).ready(function(){
+
+                
+            $("#btnBuscarTurno").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("turnos", "buscar");
+        });
+
+                $('#frmRegistrarTurno').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarTurno").data("accion"),
+                        id = $("#frmRegistrarTurno").data("codigoturno"),
+                        idTurno = $("#cboTurno").val(),
+                        nombre = $('#txtNombreTurno').val(),
+                        horaInicio = $('#txtHoraInicio').val(),
+                        horaFin = $('#txtHoraFin').val(),
+                        diaInicio = $('#txtDiaInicio').val(),
+                        diaFin = $('#txtDiaFin').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre,
+                            'horaInicio': horaInicio,
+                            'horaSalida': horaFin,
+                            'diaInicio': diaInicio,
+                            'diaSalida': diaFin
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/turno', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosTurno();
+                                consultarTurnos();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosTurno();
+                });
+            });
+  </script>

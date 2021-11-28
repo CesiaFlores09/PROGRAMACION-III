@@ -1,0 +1,93 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarTurno">
+    <div class="card-header">
+        Consulta de Turnos
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarTurno" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarTurno" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="6">
+                        <input class="form-control" placeholder="Buscar turnos" type="text" 
+                            name="txtBuscarTurnos" id="txtBuscarTurnos">
+                    </th>
+                </tr>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>HORA DE ENTRADA</th>
+                    <th>HORA DE SALIDA</th>
+                    <th>DIA DE ENTRADA</th>
+                    <th>DIA DE SALIDA</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarTurnos(){
+        $.get("http://localhost:3008/consultar-turno",(respuesta, status)=>{
+            $("#tblBuscarTurno > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarTurno = $("#tblBuscarTurno > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(turno => {
+                    filas += `
+                        <tr onclick='mostrarTurno(${JSON.stringify(turno)})'>
+                            <td>${turno.Nombre}</td>
+                            <td>${turno.HoraInicio}</td>
+                            <td>${turno.HoraSalida}</td>
+                            <td>${turno.DiaInicio}</td>
+                            <td>${turno.DiaSalida}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarTurno(${JSON.stringify(turno)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay turnos registrados</td>
+                        </tr>`;
+            }
+            $tblBuscarTurno.append(filas);
+        }, "json");
+    }
+    function eliminarTurno(turno){
+        if( confirm(`Esta seguro de eliminar el turno ${turno.Nombre}?`) ){
+            let accion = "eliminar",
+                id = turno.idTurno,
+                datos = {accion,id};
+            $.post("http://localhost:3008/turno",JSON.stringify(datos),(resp, status)=>{
+                $("#msgTurno").removeClass("d-none").text(resp.resp);
+
+                $("#msgTurno")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgTurno").addClass("d-none");
+                },5000);
+                limpiarDatosTurno();
+                consultarTurnos();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarTurnos();
+        $("#txtBuscarTurnos").keyup(function(e){
+            let valor = $(this).val(),
+                $tblturnos = $("#tblBuscarTurno > tbody > tr");
+                $tblturnos.show();
+            let $filas = $tblturnos.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>
