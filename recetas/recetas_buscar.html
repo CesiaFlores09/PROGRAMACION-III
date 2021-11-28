@@ -1,0 +1,91 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarMedicamento">
+    <div class="card-header">
+        Consulta de Medicamentos
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarMedicamento" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarMedicamento" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="5">
+                        <input class="form-control" placeholder="Buscar medicamentos" type="text" 
+                            name="txtBuscarMedicamentos" id="txtBuscarMedicamentos">
+                    </th>
+                </tr>
+                <tr>
+                    <th>PROVEEDOR</th>
+                    <th>NOMBRE</th>
+                    <th>PRECIO</th>
+                    <th>CANTIDAD</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarMedicamentos(){
+        $.get("http://localhost:3008/consultar-medicamento",(respuesta, status)=>{
+            $("#tblBuscarMedicamento > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarMedicamento = $("#tblBuscarMedicamento > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(medicamento => {
+                    filas += `
+                        <tr onclick='mostrarMedicamento(${JSON.stringify(medicamento)})'>
+                            <td>${medicamento.idProveedor}</td>
+                            <td>${medicamento.Nombre}</td>
+                            <td>${medicamento.Precio}</td>
+                            <td>${medicamento.Cantidad}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarMedicamento(${JSON.stringify(medicamento)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay medicamentos registrados</td>
+                        </tr>`;
+            }
+            $tblBuscarMedicamento.append(filas);
+        }, "json");
+    }
+    function eliminarMedicamento(medicamento){
+        if( confirm(`Esta seguro de eliminar el medicamento ${medicamento.Nombre}?`) ){
+            let accion = "eliminar",
+                id = medicamento.idMedicamento,
+                datos = {accion,id};
+            $.post("http://localhost:3008/medicamento",JSON.stringify(datos),(resp, status)=>{
+                $("#msgMedicamento").removeClass("d-none").text(resp.resp);
+
+                $("#msgMedicamento")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgMedicamento").addClass("d-none");
+                },5000);
+                limpiarDatosMedicamento();
+                consultarMedicamentos();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarMedicamentos();
+        $("#txtBuscarMedicamentos").keyup(function(e){
+            let valor = $(this).val(),
+                $tblmedicamentos = $("#tblBuscarMedicamento > tbody > tr");
+                $tblmedicamentos.show();
+            let $filas = $tblmedicamentos.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>

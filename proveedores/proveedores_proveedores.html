@@ -1,0 +1,103 @@
+<div class="card text-white bg-secondary mb-3" id="cardProveedor">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardProveedor" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarProveedor" data-accion="nuevo" data-codigoproveedor="0" class="row g-2">
+           
+            <div class="col-auto">
+                <label for="txtNombreProveedor" class="">Nombre Completo</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombreProveedor" placeholder="Baller" required>
+            </div>
+            
+            <d-iv class="col-auto">
+                <label for="txtTelefonoProveedor" class="">Telefono</label>
+                <input pattern="[0-9]{4}[-| ][0-9]{4}" required type="tel" class="form-control" id="txtTelefonoProveedor" placeholder="2444-2444">
+            </d-iv>
+            <div class="col-auto">
+                <label for="txtDireccionProveedor" class="">Dirección</label>
+                <input type="text" class="form-control" id="txtDireccionProveedor" placeholder="4ta calle O, Barrio San Miguelito, Edificío #3" required>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarProveedor" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarProveedor" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgProveedor">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarProveedor(proveedor){
+        $("#frmRegistrarProveedor")
+            .data("accion","modificar")
+            .data("codigoproveedor",proveedor.idProveedor);
+        $("#txtNombreProveedor").val(proveedor.Nombre);
+        $("#txtTelefonoProveedor").val(proveedor.Telefono);
+        $("#txtDireccionProveedor").val(proveedor.Direccion);
+        }
+      
+        function limpiarDatosProveedor(proveedor){
+            $("#frmRegistrarProveedor")
+                .data("accion","nuevo")
+                .data("codigoproveedor",0);
+            $("#txtNombreProveedor").val("");
+            $("#txtTelefonoProveedor").val("");
+            $("#txtDireccionProveedor").val("");
+        }
+
+            $(document).ready(function(){
+
+            $("#btnBuscarProveedor").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("proveedores", "buscar");
+        });
+
+                $('#frmRegistrarProveedor').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarProveedor").data("accion"),
+                        id = $("#frmRegistrarProveedor").data("codigoproveedor"),
+                        nombre = $('#txtNombreProveedor').val(),
+                        telefono = $('#txtTelefonoProveedor').val(),
+                        direccion = $('#txtDireccionProveedor').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre,
+                            'telefono': telefono,
+                            'direccion': direccion
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/proveedor', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosProveedor();
+                                consultarProveedors();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosProveedor();
+                });
+            });
+  </script>
