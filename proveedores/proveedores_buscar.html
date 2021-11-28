@@ -1,0 +1,89 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarProveedor">
+    <div class="card-header">
+        Consulta de Proveedors
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarProveedor" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarProveedor" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="4">
+                        <input class="form-control" placeholder="Buscar proveedors" type="text" 
+                            name="txtBuscarProveedors" id="txtBuscarProveedors">
+                    </th>
+                </tr>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>TELEFONO</th>
+                    <th>DIRECCION</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarProveedors(){
+        $.get("http://localhost:3008/consultar-proveedor",(respuesta, status)=>{
+            $("#tblBuscarProveedor > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarProveedor = $("#tblBuscarProveedor > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(proveedor => {
+                    filas += `
+                        <tr onclick='mostrarProveedor(${JSON.stringify(proveedor)})'>
+                            <td>${proveedor.Nombre}</td>
+                            <td>${proveedor.Telefono}</td>
+                            <td>${proveedor.Direccion}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarProveedor(${JSON.stringify(proveedor)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay proveedors registrados</td>
+                        </tr>`;
+            }
+            $tblBuscarProveedor.append(filas);
+        }, "json");
+    }
+    function eliminarProveedor(proveedor){
+        if( confirm(`Esta seguro de eliminar el proveedor ${proveedor.Nombre}?`) ){
+            let accion = "eliminar",
+                id = proveedor.idProveedor,
+                datos = {accion,id};
+            $.post("http://localhost:3008/proveedor",JSON.stringify(datos),(resp, status)=>{
+                $("#msgUsuario").removeClass("d-none").text(resp.resp);
+
+                $("#msgUsuario")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgUsuario").addClass("d-none");
+                },5000);
+                limpiarDatosProveedor();
+                consultarProveedors();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarProveedors();
+        $("#txtBuscarProveedors").keyup(function(e){
+            let valor = $(this).val(),
+                $tblproveedors = $("#tblBuscarProveedor > tbody > tr");
+                $tblproveedors.show();
+            let $filas = $tblproveedors.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>

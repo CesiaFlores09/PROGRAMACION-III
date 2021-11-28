@@ -1,0 +1,128 @@
+<div class="card text-white bg-secondary mb-3" id="cardReceta">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardReceta" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarReceta" data-accion="nuevo" data-codigoreceta="0" class="row g-2">
+           <div class="form-group col-md-6">
+                <label for="txtPaciente">Paciente</label>
+                <select id="txtPaciente" name="txtPaciente" class="form-control form-control-sm">
+                    
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtMedico">Médico</label>
+                <select id="txtMedico" name="txtMedico" class="form-control form-control-sm">
+                    
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="cboMedicamentos">Medicamentos</label>
+                <select id="cboMedicamentos" class="form-control form-control-sm" name="cboMedicamentos" required multiple>
+                   
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtObservaciones">Observaciones</label>
+                <textarea id="txtObservaciones" name="txtObservaciones" class="form-control form-control-sm" rows="3"></textarea>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarReceta" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarReceta" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgReceta">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function consultarProveedor(params) {
+          $.get("http://localhost:3008/consultar-proveedor", (respuesta, status) => {
+              let cboProveedor = $("#cboProveedor");
+              cboProveedor.empty();
+              cboProveedor.append("<option value=''>Seleccione un Proveedor</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(proveedor => {
+                        cboProveedor.append("<option value='" + proveedor.idProveedor + "'>" + proveedor.Nombre + "</option>");
+                    });
+                }
+          }, "json");
+          
+      }
+      function mostrarReceta(receta){
+        $("#frmRegistrarReceta")
+            .data("accion","modificar")
+            .data("codigoreceta",receta.idReceta);
+        $("#txtNombreReceta").val(receta.Nombre);
+        $("#txtPrecioReceta").val(receta.Precio);
+        $("#txtCantidadReceta").val(receta.Cantidad);
+        }
+      
+        function limpiarDatosReceta(receta){
+            $("#frmRegistrarReceta")
+                .data("accion","nuevo")
+                .data("codigoreceta",0);
+            $("#txtNombreReceta").val("");
+            $("#txtPrecioReceta").val("");
+            $("#txtCantidadReceta").val("");
+        }
+
+            $(document).ready(function(){
+                consultarProveedor();
+
+                
+            $("#btnBuscarReceta").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("recetas", "buscar");
+        });
+
+                $('#frmRegistrarReceta').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarReceta").data("accion"),
+                        id = $("#frmRegistrarReceta").data("codigoreceta"),
+                        idProveedor = $("#cboProveedor").val(),
+                        nombre = $('#txtNombreReceta').val(),
+                        precio = $('#txtPrecioReceta').val(),
+                        cantidad = $('#txtCantidadReceta').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'idProveedor': idProveedor,
+                            'nombre': nombre,
+                            'precio': precio,
+                            'cantidad': cantidad
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/receta', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosReceta();
+                                consultarRecetas();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosReceta();
+                });
+            });
+  </script>

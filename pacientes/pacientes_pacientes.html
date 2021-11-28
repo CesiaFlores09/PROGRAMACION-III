@@ -1,0 +1,212 @@
+<div class="card text-white bg-secondary mb-3" id="cardPaciente">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardPaciente" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarPaciente" data-accion="nuevo" data-codigopaciente="0" class="row g-2">
+           
+            <div class="col-auto">
+                <label for="txtDui" class="">DUI</label>
+                <input pattern="[0-9]{8}-[0-9]{1}" type="text" class="form-control" id="txtDui" placeholder="DUI" required>
+            </div>
+            <div class="col-auto" >
+                <label for="txtNit" class="">NIT</label>
+                <input pattern="[0-9]{4}-[0-9]{6}-[0-9]{3}-[0-9]{1}" type="text" class="form-control" id="txtNit" placeholder="NIT" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtNombre" class="">Nombre Completo</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombre" placeholder="Marvin Josue Solorzano Cruz" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtSexoUsuario" class="">Sexo</label>
+                <select name="" id="txtSexoUsuario" class="form-control" required>
+                    <option value="">Seleccione</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                </select>
+               </div>
+            <div class="col-auto">
+                <label for="txtTelefonoUsuario" class="">Telefono</label>
+                <input pattern="[0-9]{4}[-| ][0-9]{4}" required type="tel" class="form-control" id="txtTelefonoUsuario" placeholder="Telefono">
+            </div>
+            <div class="col-auto">
+                <label for="txtEmailUsuario" class="">Email</label>
+                <input pattern="^[^@]+@[^@]+\.[a-zA-Z]{2,}$" required type="text" class="form-control" id="txtEmailUsuario" placeholder="Email">
+            </div>
+            <div class="col-auto">
+                <label for="txtDireccion" class="">Dirección</label>
+                <input type="text" class="form-control" id="txtDireccion" placeholder="Dirección" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtFechaNacimientoUsuario" class="">Fecha Nacimiento</label>
+                <input required type="date" class="form-control" id="txtFechaNacimientoUsuario" >
+            </div>
+            <div class="col-auto">
+                <video src="" id="fotoUsuario" width="200" height="200"></video>
+                <canvas id="previsualizarFoto"></canvas>
+                <img src="" alt="" id="imgPrevisualizarFoto">
+            </div>
+            <div class="col-auto">
+                <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success mb-3" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
+                <button id="btnRegistrar" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: red;" disabled>Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarPaciente" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgUsuario">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarPaciente(paciente){
+        $("#frmRegistrarPaciente")
+            .data("accion","modificar")
+            .data("codigopaciente",paciente.idPaciente);
+        $("#txtDui").val(paciente.DUI);
+        $("#txtNit").val(paciente.NIT);
+        $("#txtNombre").val(paciente.Nombre);
+        $("#txtSexoUsuario").val(paciente.Sexo);
+        $("#txtTelefonoUsuario").val(paciente.Telefono);
+        $("#txtEmailUsuario").val(paciente.Correo);
+        $("#txtDireccion").val(paciente.Direccion);
+        fecha = paciente.FechaNacimiento.split("/");
+        $("#txtFechaNacimientoUsuario").val(fecha[2]+"-"+fecha[1]+"-"+fecha[0]);
+        $("#imgPrevisualizarFoto").attr("src",paciente.Foto);
+        }
+      function iniciarVideo() {
+                navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+                if (navigator.getUserMedia) {
+                    navigator.getUserMedia({
+                        video: true
+                    }, function (stream) {
+                        var video = $('#fotoUsuario')[0];
+                        video.srcObject = stream;
+                        video.play();
+                    }, function (error) {
+                        console.log("Error al acceder a la camara");
+                    });
+                } else {
+                    console.log("Su navegador no soporta la camara");
+                }
+            }
+            function capturarRostro() {
+                let video = $('#fotoUsuario')[0],
+                    canvas = $('#previsualizarFoto')[0],
+                    context = canvas.getContext('2d'),
+                    width = video.width,
+                    height = video.height;
+                canvas.width = width;
+                canvas.height = height;
+                context.drawImage(video, 0, 0, width, height);
+
+                data = canvas.toDataURL('image/png');
+                $("#imgPrevisualizarFoto").attr("src",data);
+            }
+            function limpiarDatosPaciente() {
+                $("#frmRegistrarPaciente")
+            .data("accion","nuevo")
+            .data("codigopaciente",0);
+                $('#txtNombre').val('');
+                $('#txtDui').val('');
+                $('#txtNit').val('');
+                $('#txtSexoUsuario').val('');
+                $('#txtTelefonoUsuario').val('');
+                $('#txtEmailUsuario').val('');
+                $('#txtDireccion').val('');
+                $('#txtFechaNacimientoUsuario').val('');
+                var canvas = $('#previsualizarFoto')[0];
+                var context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                $("#imgPrevisualizarFoto").attr("src","");
+                $('#btnRegistrar').prop('disabled', true);
+                $('#btnRegistrar').css('border-color', 'red');
+                $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+            }
+            $(document).ready(function(){
+                iniciarVideo();
+                $("#txtDui").on("change", function(){/** ... **/});
+
+                $("#txtNit").on("change", function(){/** ... **/});
+
+                $('#btnCapturarRostroRegistrar').on('click', function(){
+                    capturarRostro();
+                    $('#btnRegistrar').prop('disabled', false);
+                    $('#btnRegistrar').css('border-color', 'green');
+                    $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                });
+
+                $("#btnBuscarPaciente").click(function(ev){
+            ev.preventDefault();
+            abrir_ventana("pacientes", "buscar");
+        });
+
+                $('#frmRegistrarPaciente').submit(e => {
+                    e.preventDefault();
+                    let canvas = $('#previsualizarFoto')[0],
+                        context = canvas.getContext('2d');
+                    let foto = [];
+                    for(i=0; i<200; i++){
+                        for(j=0; j< 200; j++){
+                            let imgdata = context.getImageData(j,i,1,1).data,
+                                r = imgdata[0],
+                                g = imgdata[1],
+                                b = imgdata[2];
+                            foto.push([r,g,b]);
+                        }
+                    }
+                    let accion = $("#frmRegistrarPaciente").data("accion"),
+                        id = $("#frmRegistrarPaciente").data("codigopaciente"),
+                        dui = $('#txtDui').val(),
+                        nit = $('#txtNit').val(),
+                        nombre = $('#txtNombre').val(),
+                        sexo = $('#txtSexoUsuario').val(),
+                        telefono = $('#txtTelefonoUsuario').val(),
+                        email = $('#txtEmailUsuario').val(),
+                        direccion = $('#txtDireccion').val(),
+                        fechaNacimiento = $('#txtFechaNacimientoUsuario').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'dui': dui,
+                            'nit': nit,
+                            'nombre': nombre,
+                            'sexo': sexo,
+                            'telefono': telefono,
+                            'correo': email,
+                            'direccion': direccion,
+                            'fechaNacimiento': fechaNacimiento,
+                            'foto': foto
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/paciente', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosPaciente();
+                                consultarPacientes();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosPaciente();
+                });
+            });
+  </script>
