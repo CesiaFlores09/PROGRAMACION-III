@@ -5,125 +5,19 @@ import json
 import math
 from PIL import Image
 import numpy as np
-# Crear una ai que reconozca el rostro
-import matplotlib.pyplot as plt
-import tensorflow as tf
-import cv2
-from keras.models import load_model
 
-class analizar_rostro():
-    def __init__(self):
-        self.model = load_model('model.hdf5')
+import crudpaciente
+import crudproveedor
+import crudmedicamentos
+import crudturnos
+import crudespecialidades
 
-    def cargar_imagen(self, ruta):
-        imagen = cv2.imread(ruta)
-        imagen = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
-        return imagen
-
-    def dibujar_rostro(self, imagen, title=''):
-        fig = plt.figure(figsize=(8, 8))
-        ax1 = fig.add_subplot(111)
-        ax1.set_yticklabels([])
-        ax1.set_xticklabels([])
-        
-        ax1.set_title(title)
-        ax1.imshow(imagen)
-        plt.show()
-
-    def dame_rostro(self, imagen):
-        copia_imagen = np.copy(imagen)
-        
-        gray = cv2.cvtColor(copia_imagen, cv2.COLOR_BGR2GRAY)
-
-        clasificador = cv2.CascadeClassifier('detectors/haarcascade_frontalface_default.xml')
-
-        cara = clasificador.detectMultiScale(gray, 1.2, 4)
-
-        return cara
-
-    def dibujar_rectangulo(self, imagen, cara=None, plot=True):
-        if cara is None:
-            cara = self.dame_rostro(imagen)
-        
-        imagen_con_rectangulo = np.copy(imagen)
-
-        for (x, y, w, h) in cara:
-            cv2.rectangle(imagen_con_rectangulo, (x, y), (x + w, y + h), (255, 0, 0), 3)
-
-        if plot is True:
-            self.dibujar_rostro(imagen_con_rectangulo)
-        else:
-            return imagen_con_rectangulo
-
-    def pintar_puntos(self, imagen, informacion_imagen):
-        fig = plt.figure(figsize=(8, 8))
-        ax1 = fig.add_subplot(111)
-
-        for (cara, puntos) in informacion_imagen:
-            for (x, y) in puntos: ax1.scatter(x, y, s=10, c='c', marker='o')
-
-        ax1.set_yticklabels([])
-        ax1.set_xticklabels([])
-        ax1.imshow(imagen)
-
-    def analizar(self, img):
-        img = cv2.resize(img, (64, 64))
-        img = np.reshape(img, (1, 64, 64, 3))
-        img = img / 255.0
-        pred = self.model.predict(img)
-        return pred
-
-detectar_rostro = analizar_rostro()
-imagen = detectar_rostro.cargar_imagen('icon/breaking_bad.jpg')
-cara = detectar_rostro.dame_rostro(imagen)
-print("Caras detectadas {}".format(len(cara)))
-imagen_con_rectangulo = detectar_rostro.dibujar_rectangulo(imagen, cara)
-
+crudproveedor = crudproveedor.curdproveedor()
+crudpaciente = crudpaciente.curdpacientes()
+crudmedicamentos = crudmedicamentos.curdmedicamento()
+crudturnos = crudturnos.curdturno()
+crudespecialidades = crudespecialidades.curdespecialidad()
 class crud:
-    def __init__(self):
-        self.conexion = mysql.connector.connect(user='root', password='flores',
-                                           host='localhost', database='clinica')
-        if self.conexion.is_connected():
-            print('Conectado exitosamente a la base de datos')
-        else:
-            print('Error al conectar a la base de datos')
-
-    def auto_increment(self, tabla):
-        try:
-            if tabla == 'pacientes':
-                sql = 'SELECT MAX(idPaciente) AS id FROM pacientes'
-            elif tabla == 'personal':
-                sql = 'SELECT MAX(idPersonal) AS id FROM personal'
-            valores = ()
-            resultado = self.ejercer_consulta(sql, valores)
-            if resultado[0]['id'] is None:
-                return 0
-            else:
-                return resultado[0]['id']+1
-        except Exception as e:
-            print(e)
-            return False
-
-    def ejecutar_sql(self, sql, valores):
-        try:
-            cursor = self.conexion.cursor()
-            cursor.execute(sql, valores)
-            self.conexion.commit()
-            return True
-        except Exception as e:
-            print(e)
-            return False
-    
-    def ejercer_consulta(self, sql, valores):
-        try:
-            cursor = self.conexion.cursor(dictionary=True)
-            cursor.execute(sql, valores)
-            resultado = cursor.fetchall()
-            return resultado
-        except Exception as e:
-            print(e)
-            return False
-
     def administrar_paciente(self, datos):
         id = 0
         if datos['accion'] == 'nuevo':
@@ -153,54 +47,89 @@ class crud:
         # Si no, se denegara el acceso
         return True
 
-crud=crud()
-
-
 class servidorBasico(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             self.path = '/index.html'
             return SimpleHTTPRequestHandler.do_GET(self)
 
+        elif self.path == '/consultar-paciente':
+            resp = crudpaciente.consultar_paciente()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-proveedor':
+            resp = crudproveedor.consultar_proveedor()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-medicamento':
+            resp = crudmedicamentos.consultar_medicamento()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-turno':
+            resp = crudturnos.consultar_turno()
+            for hora in resp:
+                hora['HoraInicio'] = str(hora['HoraInicio'])
+                hora['HoraSalida'] = str(hora['HoraSalida'])
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-especialidad':
+            resp = crudespecialidades.consultar_especialidad()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+            
         else:
             return SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
-        if self.path == '/insertar':
-            content_length = int(self.headers['Content-Length'])
-            data = self.rfile.read(content_length)
-            data = data.decode('utf-8')
-            data = json.loads(data)
-            self.send_response(200)
-            self.end_headers()
-           
-        elif self.path == '/registrar_paciente':
-            content_length = int(self.headers['Content-Length'])
-            data = self.rfile.read(content_length)
-            data = data.decode('utf-8')
-            data = json.loads(data)
-            resultado = crud.administrar_paciente(data)
+        content_length = int(self.headers['Content-Length'])
+        data = self.rfile.read(content_length)
+        data = data.decode('utf-8')
+        data = parse.unquote(data)
+        data = json.loads(data)
+
+        if self.path == '/paciente':
+            resultado = crudpaciente.administrar_paciente(data)
             print(resultado)
-            if data['accion'] == 'nuevo' and resultado['respuesta'] == True:
+            if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
                 matriz = data['foto']
                 matriz = [matriz[i:i+200] for i in range(0, len(matriz), 200)]
                 matriz = np.array(matriz)
-                id = resultado['id']
+                if data['accion'] == 'nuevo':
+                    id = resultado[1]
+                    resultado = resultado[0]
+                else:
+                    id = data['id']
                 im = Image.fromarray((matriz).astype(np.uint8))
                 im.save('icon/pacientes/perfil'+str(id)+'.jpg')
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(json.dumps(dict(resultado=resultado)).encode('utf-8'))
+
+        elif self.path == '/proveedor':
+            resultado = crudproveedor.administrar_proveedor(data)
+
+        elif self.path == '/medicamento':
+            resultado = crudmedicamentos.administrar_medicamento(data)
+
+        elif self.path == '/turno':
+            resultado = crudturnos.administrar_turno(data)
+
+        elif self.path == '/especialidad':
+            resultado = crudespecialidades.administrar_especialidad(data)
 
         elif self.path == '/admintir':
-            content_length = int(self.headers['Content-Length'])
-            data = self.rfile.read(content_length)
-            data = data.decode('utf-8')
-            data = json.loads(data)
             resultado = crud.permitir_entrada(data)
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(json.dumps(dict(resultado=resultado)).encode('utf-8'))
+            
+            
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(json.dumps(dict(resultado=resultado)).encode('utf-8'))
 
 print('Servidor iniciado en el puerto 3008')
 servidor = HTTPServer(('localhost', 3008), servidorBasico)
