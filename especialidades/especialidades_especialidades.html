@@ -1,0 +1,86 @@
+<div class="card text-white bg-secondary mb-3" id="cardEspecialidad">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardEspecialidad" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarEspecialidad" data-accion="nuevo" data-codigoespecialidad="0" class="row g-2">
+           <div class="form-group col-md-6">
+                <label for="txtNombreEspecialidad">Nombre del Especialidad</label>
+                <input pattern="[A-Za-z0-9]{1,}" type="text" id="txtNombreEspecialidad" name="txtNombreEspecialidad" class="form-control form-control-sm" placeholder="Nombre del Especialidad" required>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarEspecialidad" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarEspecialidad" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgEspecialidad">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarEspecialidad(especialidad){
+        $("#frmRegistrarEspecialidad")
+            .data("accion","modificar")
+            .data("codigoespecialidad",especialidad.idEspecialidad);
+        $("#txtNombreEspecialidad").val(especialidad.Nombre);
+        }
+      
+        function limpiarDatosEspecialidad(especialidad){
+            $("#frmRegistrarEspecialidad")
+                .data("accion","nuevo")
+                .data("codigoespecialidad",0);
+            $("#txtNombreEspecialidad").val("");
+        }
+
+            $(document).ready(function(){
+
+                
+            $("#btnBuscarEspecialidad").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("especialidades", "buscar");
+        });
+
+                $('#frmRegistrarEspecialidad').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarEspecialidad").data("accion"),
+                        id = $("#frmRegistrarEspecialidad").data("codigoespecialidad"),
+                        nombre = $('#txtNombreEspecialidad').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/especialidad', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosEspecialidad();
+                                consultarEspecialidades();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosEspecialidad();
+                });
+            });
+  </script>
