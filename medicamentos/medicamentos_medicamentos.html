@@ -1,0 +1,123 @@
+<div class="card text-white bg-secondary mb-3" id="cardMedicamento">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardMedicamento" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarMedicamento" data-accion="nuevo" data-codigomedicamento="0" class="row g-2">
+           <!-- Select Proveedor -->
+            <div class="form-group col-md-6">
+                <label for="cboProveedor">Proveedor</label>
+                <select id="cboProveedor" class="form-control form-control-sm" required>
+                </select>
+            </div>
+            <div class="col-auto">
+                <label for="txtNombreMedicamento" class="">Nombre</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombreMedicamento" placeholder="Dolocrin" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtPrecioMedicamento" class="">Precio</label>
+                <!-- Inpur que permita decimales -->
+                <input pattern="^[0-9]+(\.[0-9]{1,2})?$" type="text" class="form-control" id="txtPrecioMedicamento" placeholder="$0.00" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtCantidadMedicamento" class="">Cantidad</label>
+                <input pattern="^[0-9]{1,5}$" type="text" class="form-control" id="txtCantidadMedicamento" placeholder="0" required>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarMedicamento" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarMedicamento" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgMedicamento">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function consultarProveedor(params) {
+          $.get("http://localhost:3008/consultar-proveedor", (respuesta, status) => {
+              let cboProveedor = $("#cboProveedor");
+              cboProveedor.empty();
+              cboProveedor.append("<option value=''>Seleccione un Proveedor</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(proveedor => {
+                        cboProveedor.append("<option value='" + proveedor.idProveedor + "'>" + proveedor.Nombre + "</option>");
+                    });
+                }
+          }, "json");
+          
+      }
+      function mostrarMedicamento(medicamento){
+        $("#frmRegistrarMedicamento")
+            .data("accion","modificar")
+            .data("codigomedicamento",medicamento.idMedicamento);
+        $("#txtNombreMedicamento").val(medicamento.Nombre);
+        $("#txtPrecioMedicamento").val(medicamento.Precio);
+        $("#txtCantidadMedicamento").val(medicamento.Cantidad);
+        }
+      
+        function limpiarDatosMedicamento(medicamento){
+            $("#frmRegistrarMedicamento")
+                .data("accion","nuevo")
+                .data("codigomedicamento",0);
+            $("#txtNombreMedicamento").val("");
+            $("#txtPrecioMedicamento").val("");
+            $("#txtCantidadMedicamento").val("");
+        }
+
+            $(document).ready(function(){
+                consultarProveedor();
+            $("#btnBuscarMedicamento").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("medicamentos", "buscar");
+        });
+
+                $('#frmRegistrarMedicamento').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarMedicamento").data("accion"),
+                        id = $("#frmRegistrarMedicamento").data("codigomedicamento"),
+                        idProveedor = $("#cboProveedor").val(),
+                        nombre = $('#txtNombreMedicamento').val(),
+                        precio = $('#txtPrecioMedicamento').val(),
+                        cantidad = $('#txtCantidadMedicamento').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'idProveedor': idProveedor,
+                            'nombre': nombre,
+                            'precio': precio,
+                            'cantidad': cantidad
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/medicamento', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosMedicamento();
+                                consultarMedicamentos();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosMedicamento();
+                });
+            });
+  </script>
