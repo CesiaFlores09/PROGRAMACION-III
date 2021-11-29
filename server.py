@@ -5,18 +5,50 @@ import json
 import math
 from PIL import Image
 import numpy as np
+import tensorflow as tf
+
+datos = pd.read_csv("/content/datos.csv", sep=";", encoding="utf-8")
+#datos de entrada
+datos_entrada = datos.copy()
+datos_labels = datos_entrada.pop("cuota")
+datos_entrada = np.array(datos_entrada)
+print(datos_entrada)
+#datos de salida
+datos_salida = datos.copy()
+datos_labels2 = datos_salida.pop("prestamo"),datos_salida.pop("interes"),datos_salida.pop("plazo")
+datos_salida = np.array(datos_salida)
+print(datos_salida)
+
+
+# Crear un modelo que reciva de entrada un prestamo, meses e interes y retorne el monto a pagar
+# Crear el modelo, la entrada deve ser así: [prestamo, meses, interes]
+model = tf.keras.Sequential()
+
+model.add(tf.keras.layers.Dense(units=10, input_shape=[3]))
+# Crear una capa oculta con 10 neuronas
+model.add(tf.keras.layers.Dense(units=10))
+# Crear una capa de salida con una unidad
+model.add(tf.keras.layers.Dense(units=1))
+model.compile(optimizer='adam', loss='mean_squared_error')
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
 
 import crudpaciente
 import crudproveedor
 import crudmedicamentos
 import crudturnos
 import crudespecialidades
+import crudpersonal
+import crudrecetas
 
 crudproveedor = crudproveedor.curdproveedor()
 crudpaciente = crudpaciente.curdpacientes()
 crudmedicamentos = crudmedicamentos.curdmedicamento()
 crudturnos = crudturnos.curdturno()
 crudespecialidades = crudespecialidades.curdespecialidad()
+crudpersonal = crudpersonal.curdpersonal()
+crudrecetas = crudrecetas.curdreceta()
 class crud:
     def administrar_paciente(self, datos):
         id = 0
@@ -59,6 +91,12 @@ class servidorBasico(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
 
+        elif self.path == '/consultar-personal':
+            resp = crudpersonal.consultar_personal()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
         elif self.path == '/consultar-proveedor':
             resp = crudproveedor.consultar_proveedor()
             self.send_response(200)
@@ -82,6 +120,12 @@ class servidorBasico(SimpleHTTPRequestHandler):
 
         elif self.path == '/consultar-especialidad':
             resp = crudespecialidades.consultar_especialidad()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-receta':
+            resp = crudrecetas.consultar_receta()
             self.send_response(200)
             self.end_headers()
             self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
@@ -111,6 +155,21 @@ class servidorBasico(SimpleHTTPRequestHandler):
                 im = Image.fromarray((matriz).astype(np.uint8))
                 im.save('icon/pacientes/perfil'+str(id)+'.jpg')
 
+        if self.path == '/personal':
+            resultado = crudpersonal.administrar_personal(data)
+            print(resultado)
+            if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
+                matriz = data['foto']
+                matriz = [matriz[i:i+200] for i in range(0, len(matriz), 200)]
+                matriz = np.array(matriz)
+                if data['accion'] == 'nuevo':
+                    id = resultado[1]
+                    resultado = resultado[0]
+                else:
+                    id = data['id']
+                im = Image.fromarray((matriz).astype(np.uint8))
+                im.save('icon/personal/perfil'+str(id)+'.jpg')
+
         elif self.path == '/proveedor':
             resultado = crudproveedor.administrar_proveedor(data)
 
@@ -122,6 +181,9 @@ class servidorBasico(SimpleHTTPRequestHandler):
 
         elif self.path == '/especialidad':
             resultado = crudespecialidades.administrar_especialidad(data)
+
+        elif self.path == '/receta':
+            resultado = crudrecetas.administrar_receta(data)
 
         elif self.path == '/admintir':
             resultado = crud.permitir_entrada(data)

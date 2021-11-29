@@ -4,26 +4,26 @@
     <div class="card-body">
         <form id="frmRegistrarReceta" data-accion="nuevo" data-codigoreceta="0" class="row g-2">
            <div class="form-group col-md-6">
-                <label for="txtPaciente">Paciente</label>
-                <select id="txtPaciente" name="txtPaciente" class="form-control form-control-sm">
+                <label for="cboPacienteReceta">Paciente</label>
+                <select id="cboPacienteReceta" name="cboPacienteReceta" class="form-control form-control-sm">
                     
                 </select>
             </div>
             <div class="form-group col-md-6">
-                <label for="txtMedico">Médico</label>
-                <select id="txtMedico" name="txtMedico" class="form-control form-control-sm">
+                <label for="cboMedicoReceta">Médico</label>
+                <select id="cboMedicoReceta" name="cboMedicoReceta" class="form-control form-control-sm">
                     
                 </select>
             </div>
             <div class="form-group col-md-6">
-                <label for="cboMedicamentos">Medicamentos</label>
-                <select id="cboMedicamentos" class="form-control form-control-sm" name="cboMedicamentos" required multiple>
+                <label for="cboMedicamentosReceta">Medicamentos</label>
+                <select id="cboMedicamentosReceta" class="form-control form-control-sm" name="cboMedicamentosReceta" required multiple>
                    
                 </select>
             </div>
             <div class="form-group col-md-6">
-                <label for="txtObservaciones">Observaciones</label>
-                <textarea id="txtObservaciones" name="txtObservaciones" class="form-control form-control-sm" rows="3"></textarea>
+                <label for="txtObservacionesReceta">Observaciones</label>
+                <textarea id="txtObservacionesReceta" name="txtObservacionesReceta" class="form-control form-control-sm" rows="3"></textarea>
             </div>
             <div class="col-auto">
                 <button id="btnRegistrarReceta" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
@@ -44,40 +44,71 @@
     </div>
   </div>
   <script>
-      function consultarProveedor(params) {
-          $.get("http://localhost:3008/consultar-proveedor", (respuesta, status) => {
-              let cboProveedor = $("#cboProveedor");
-              cboProveedor.empty();
-              cboProveedor.append("<option value=''>Seleccione un Proveedor</option>");
+      function consultarPersonalReceta() {
+          $.get("http://localhost:3008/consultar-personal", (respuesta, status) => {
+              console.log(respuesta);
+              let cboPersonal = $("#cboMedicoReceta");
+              cboPersonal.empty();
+              cboPersonal.append("<option value=''>Seleccione un Personal</option>");
                if(respuesta.resp.length>0){
-                    respuesta.resp.forEach(proveedor => {
-                        cboProveedor.append("<option value='" + proveedor.idProveedor + "'>" + proveedor.Nombre + "</option>");
+                    respuesta.resp.forEach(personal => {
+                        cboPersonal.append("<option value='" + personal.idPersonal + "'>" + personal.Nombre + "</option>");
                     });
                 }
           }, "json");
           
       }
+      function consultarPacienteReceta() {
+          $.get("http://localhost:3008/consultar-paciente", (respuesta, status) => {
+              console.log(respuesta);
+              let cboPaciente = $("#cboPacienteReceta");
+              cboPaciente.empty();
+              cboPaciente.append("<option value=''>Seleccione un Paciente</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(paciente => {
+                        cboPaciente.append("<option value='" + paciente.idPaciente + "'>" + paciente.Nombre + "</option>");
+                    });
+                }
+            }, "json");
+      }
+      function consultarMedicamentosReceta() {
+            $.get("http://localhost:3008/consultar-medicamento", (respuesta, status) => {
+                console.log(respuesta);
+                let cboMedicamento = $("#cboMedicamentosReceta");
+                cboMedicamento.empty();
+                 if(respuesta.resp.length>0){
+                        respuesta.resp.forEach(medicamento => {
+                            cboMedicamento.append("<option value='" + medicamento.idMedicamento + "'>" + medicamento.Nombre + "</option>");
+                        });
+                    }
+                }, "json");
+      }
       function mostrarReceta(receta){
         $("#frmRegistrarReceta")
             .data("accion","modificar")
             .data("codigoreceta",receta.idReceta);
-        $("#txtNombreReceta").val(receta.Nombre);
-        $("#txtPrecioReceta").val(receta.Precio);
-        $("#txtCantidadReceta").val(receta.Cantidad);
+        $("#cboMedicoReceta").val(receta.idPersonal);
+        $("#cboPacienteReceta").val(receta.idPaciente);
+        console.log(receta);
+        let medicamentos = receta.idMedicamentos.split(",");
+        $("#cboMedicamentosReceta").val(medicamentos);
+        $("#txtObservacionesReceta").val(receta.Detalles);
         }
       
         function limpiarDatosReceta(receta){
             $("#frmRegistrarReceta")
                 .data("accion","nuevo")
                 .data("codigoreceta",0);
-            $("#txtNombreReceta").val("");
-            $("#txtPrecioReceta").val("");
-            $("#txtCantidadReceta").val("");
+            $("#cboMedicoReceta").val("");
+            $("#cboPacienteReceta").val("");
+            $("#cboMedicamentosReceta").val("");
+            $("#txtObservacionesReceta").val("");
         }
 
             $(document).ready(function(){
-                consultarProveedor();
-
+                consultarPersonalReceta();
+                consultarPacienteReceta();
+                consultarMedicamentosReceta();
                 
             $("#btnBuscarReceta").click(function(ev){
                 ev.preventDefault();
@@ -88,17 +119,17 @@
                     e.preventDefault();
                     let accion = $("#frmRegistrarReceta").data("accion"),
                         id = $("#frmRegistrarReceta").data("codigoreceta"),
-                        idProveedor = $("#cboProveedor").val(),
-                        nombre = $('#txtNombreReceta').val(),
-                        precio = $('#txtPrecioReceta').val(),
-                        cantidad = $('#txtCantidadReceta').val(),
+                        idPersonal = $("#cboMedicoReceta").val(),
+                        idPaciente = $("#cboPacienteReceta").val(),
+                        medicamentos = $("#cboMedicamentosReceta").val(),
+                        observaciones = $("#txtObservacionesReceta").val(),
                         data = {
                             'accion': accion,
                             'id': id,
-                            'idProveedor': idProveedor,
-                            'nombre': nombre,
-                            'precio': precio,
-                            'cantidad': cantidad
+                            'idPersonal': idPersonal,
+                            'idPaciente': idPaciente,
+                            'medicamentos': medicamentos,
+                            'detalles': observaciones
                         };
                     console.log(data);
                     $.post('http://localhost:3008/receta', JSON.stringify(data), (respuesta, status) => {

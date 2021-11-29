@@ -1,0 +1,113 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarPersonal">
+    <div class="card-header">
+        Consulta de Personal
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarPersonal" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarPersonal" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="13">
+                        <input class="form-control" placeholder="Buscar personal" type="text" 
+                            name="txtBuscarPersonal" id="txtBuscarPersonal">
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>DUI</th>
+                    <th>NIT</th>
+                    <th>NOMBRE</th>
+                    <th>SEXO</th>
+                    <th>TELEFONO</th>
+                    <th>CORREO</th>
+                    <th>DIRECCION</th>
+                    <th>FECHA NACIMIENTO</th>
+                    <th>ESPECIALIDAD</th>
+                    <th>HORARIOS</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarPersonal(){
+        $.get("http://localhost:3008/consultar-personal",(respuesta, status)=>{
+            $("#tblBuscarPersonal > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarPersonal = $("#tblBuscarPersonal > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(personal => {
+                    personal.Turnos = personal.Turnos.split(",");
+                    let horarios = '';
+                    personal.Turnos.forEach(turno => {
+                        horarios += `<span class="badge badge-info text-dark"><b>${turno}</b></span>`; 
+                    });
+                    filas += `
+                        <tr onclick='mostrarPersonal(${JSON.stringify(personal)})'>
+                            <td>
+                                <img src="${personal.Foto}" width="100" height="100">
+                                </td>
+
+                            <td>${personal.DUI}</td>
+                            <td>${personal.NIT}</td>
+                            <td>${personal.Nombre}</td>
+                            <td>${personal.Sexo}</td>
+                            <td>${personal.Telefono}</td>
+                            <td>${personal.Correo}</td>
+                            <td>${personal.Direccion}</td>
+                            <td>${personal.FechaNacimiento}</td>
+                            <td>${personal.Especialidad}</td>
+                            <td>${horarios}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarPersonal(${JSON.stringify(personal)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="10">No hay personal registrado</td>
+                        </tr>`;
+            }
+            $tblBuscarPersonal.append(filas);
+        }, "json");
+    }
+    function eliminarPersonal(personal){
+        if( confirm(`Esta seguro de eliminar el personal ${personal.Nombre}?`) ){
+            let accion = "eliminar",
+                id = personal.idPersonal,
+                datos = {accion,id};
+            $.post("http://localhost:3008/personal",JSON.stringify(datos),(resp, status)=>{
+                $("#msgPersonal").removeClass("d-none").text(resp.resp);
+
+                $("#msgPersonal")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgPersonal").addClass("d-none");
+                },5000);
+                limpiarDatosPersonal();
+                consultarPersonal();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarPersonal();
+        $("#txtBuscarPersonal").keyup(function(e){
+            let valor = $(this).val(),
+                $tblpersonal = $("#tblBuscarPersonal > tbody > tr");
+                $tblpersonal.show();
+            let $filas = $tblpersonal.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>
