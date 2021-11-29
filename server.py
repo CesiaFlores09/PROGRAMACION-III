@@ -5,34 +5,6 @@ import json
 import math
 from PIL import Image
 import numpy as np
-import tensorflow as tf
-
-datos = pd.read_csv("/content/datos.csv", sep=";", encoding="utf-8")
-#datos de entrada
-datos_entrada = datos.copy()
-datos_labels = datos_entrada.pop("cuota")
-datos_entrada = np.array(datos_entrada)
-print(datos_entrada)
-#datos de salida
-datos_salida = datos.copy()
-datos_labels2 = datos_salida.pop("prestamo"),datos_salida.pop("interes"),datos_salida.pop("plazo")
-datos_salida = np.array(datos_salida)
-print(datos_salida)
-
-
-# Crear un modelo que reciva de entrada un prestamo, meses e interes y retorne el monto a pagar
-# Crear el modelo, la entrada deve ser así: [prestamo, meses, interes]
-model = tf.keras.Sequential()
-
-model.add(tf.keras.layers.Dense(units=10, input_shape=[3]))
-# Crear una capa oculta con 10 neuronas
-model.add(tf.keras.layers.Dense(units=10))
-# Crear una capa de salida con una unidad
-model.add(tf.keras.layers.Dense(units=1))
-model.compile(optimizer='adam', loss='mean_squared_error')
-
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-
 
 import crudpaciente
 import crudproveedor

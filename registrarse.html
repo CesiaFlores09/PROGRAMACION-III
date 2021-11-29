@@ -177,10 +177,10 @@
                             'foto': foto
                         };
                     console.log(data);
-                    $.post('http://localhost:3008/registrar_paciente', JSON.stringify(data), (respuesta, status) => {
+                    $.post('http://localhost:3008/paciente', JSON.stringify(data), (respuesta, status) => {
                         console.log(respuesta);
                         console.log(respuesta.resultado.respuesta == 0);
-                        if (respuesta.resultado.respuesta == true) {
+                        if (respuesta.resultado == "Registro procesado con exito") {
                             window.location.href = 'http://localhost:3008/';
                         } else {
                             alert('Error al registrar');

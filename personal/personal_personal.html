@@ -53,8 +53,8 @@
             </div>
             <div class="col-auto">
                 <video src="" id="fotoPersonal" width="200" height="200"></video>
-                <canvas id="previsualizarFoto"></canvas>
-                <img src="" alt="" id="imgPrevisualizarFoto">
+                <canvas id="previsualizarFotoPersonal"></canvas>
+                <img src="" alt="" id="imgPrevisualizarFotoPersonal">
             </div>
             <div class="col-auto">
                 <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success mb-3" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
@@ -116,7 +116,7 @@
         $("#cboEspecialidadPersonal").val(personal.idEspecialidad);
         let turnos = personal.idTurnos.split(",");
         $("#cboTurnoPersonal").val(turnos);
-        $("#imgPrevisualizarFoto").attr("src",personal.Foto);
+        $("#imgPrevisualizarFotoPersonal").attr("src",personal.Foto);
         }
       function iniciarVideo() {
                 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -136,7 +136,7 @@
             }
             function capturarRostro() {
                 let video = $('#fotoPersonal')[0],
-                    canvas = $('#previsualizarFoto')[0],
+                    canvas = $('#previsualizarFotoPersonal')[0],
                     context = canvas.getContext('2d'),
                     width = video.width,
                     height = video.height;
@@ -145,7 +145,7 @@
                 context.drawImage(video, 0, 0, width, height);
 
                 data = canvas.toDataURL('image/png');
-                $("#imgPrevisualizarFoto").attr("src",data);
+                $("#imgPrevisualizarFotoPersonal").attr("src",data);
             }
             function limpiarDatosPersonal() {
                 $("#frmRegistrarPersonal")
@@ -161,10 +161,10 @@
                 $('#cboEspecialidadPersonal').val('');
                 $('#cboTurnoPersonal').val('');
                 $('#txtFechaNacimientoPersonal').val('');
-                var canvas = $('#previsualizarFoto')[0];
+                var canvas = $('#previsualizarFotoPersonal')[0];
                 var context = canvas.getContext('2d');
                 context.clearRect(0, 0, canvas.width, canvas.height);
-                $("#imgPrevisualizarFoto").attr("src","");
+                $("#imgPrevisualizarFotoPersonal").attr("src","");
                 $('#btnRegistrar').prop('disabled', true);
                 $('#btnRegistrar').css('border-color', 'red');
                 $('#btnCapturarRostroRegistrar').css('border-color', 'red');
@@ -191,7 +191,7 @@
 
                 $('#frmRegistrarPersonal').submit(e => {
                     e.preventDefault();
-                    let canvas = $('#previsualizarFoto')[0],
+                    let canvas = $('#previsualizarFotoPersonal')[0],
                         context = canvas.getContext('2d');
                     let foto = [];
                     for(i=0; i<200; i++){
