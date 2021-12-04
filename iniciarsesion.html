@@ -28,7 +28,7 @@
 
                             <div class="col-auto">
                                 <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
-                            
+                                <button id="btnCapturarRostroLogin" type="submit" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
                                 <a href="registrarse.html" class="btn btn-warning" style="border-radius: 10px; color: black; border-color: white;">Aun no tienes cuenta</a>
                           </div>
                         </div>
@@ -84,6 +84,27 @@
                     $('#btnRegistrar').prop('disabled', false);
                     $('#btnRegistrar').css('border-color', 'green');
                     $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                });
+
+                $('#frmLogin').on('submit', function(e){
+                    e.preventDefault();
+                    let canvas = $('#previsualizarFoto')[0];
+                    let context = canvas.getContext('2d');
+                    let foto = [];
+                    for(i=0; i<200; i++){
+                        for(j=0; j< 200; j++){
+                            let imgdata = context.getImageData(j,i,1,1).data,
+                                valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
+                            foto.push(valores);
+                        }
+                    }
+                    foto = foto.join(',');
+                    data = {
+                        imagen: foto
+                    };
+                    $.post('http://localhost:3008/comparar', JSON.stringify(data), (resp) => {
+                        console.log(resp);
+                    });
                 });
             });
         </script>

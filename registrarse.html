@@ -149,12 +149,11 @@
                     for(i=0; i<200; i++){
                         for(j=0; j< 200; j++){
                             let imgdata = context.getImageData(j,i,1,1).data,
-                                r = imgdata[0],
-                                g = imgdata[1],
-                                b = imgdata[2];
-                            foto.push([r,g,b]);
+                                valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
+                            foto.push(valores);
                         }
                     }
+                    foto = foto.join(',');
                     let dui = $('#txtDui').val(),
                         nit = $('#txtNit').val(),
                         nombre = $('#txtNombre').val(),

@@ -1,9 +1,7 @@
 from urllib import parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-import mysql.connector
 import json
-import math
-from PIL import Image
+import cv2
 import numpy as np
 
 import crudpaciente
@@ -13,6 +11,7 @@ import crudturnos
 import crudespecialidades
 import crudpersonal
 import crudrecetas
+import inteligencia
 
 crudproveedor = crudproveedor.curdproveedor()
 crudpaciente = crudpaciente.curdpacientes()
@@ -21,6 +20,8 @@ crudturnos = crudturnos.curdturno()
 crudespecialidades = crudespecialidades.curdespecialidad()
 crudpersonal = crudpersonal.curdpersonal()
 crudrecetas = crudrecetas.curdreceta()
+inteligencia = inteligencia.manejarRostros()
+
 class crud:
     def administrar_paciente(self, datos):
         id = 0
@@ -46,9 +47,6 @@ class crud:
         return datos
 
     def permitir_entrada(self, usuario):
-        # Se llamara a la ai para detectar el rostro
-        # Si el rostro es reconocido, se permitira el acceso
-        # Si no, se denegara el acceso
         return True
 
 class servidorBasico(SimpleHTTPRequestHandler):
@@ -116,31 +114,54 @@ class servidorBasico(SimpleHTTPRequestHandler):
             resultado = crudpaciente.administrar_paciente(data)
             print(resultado)
             if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
-                matriz = data['foto']
-                matriz = [matriz[i:i+200] for i in range(0, len(matriz), 200)]
-                matriz = np.array(matriz)
+                foto = data['foto']
+                matriz = np.array([])
+                matriz = np.fromstring(foto, np.uint8, sep=',')
+                matriz = matriz.reshape(200, 200, 3)
                 if data['accion'] == 'nuevo':
                     id = resultado[1]
                     resultado = resultado[0]
                 else:
                     id = data['id']
-                im = Image.fromarray((matriz).astype(np.uint8))
-                im.save('icon/pacientes/perfil'+str(id)+'.jpg')
+
+                print(type(matriz))
+                # cv2.imwrite('icon/pacientes/perfil'+str(id)+'.jpg', matriz)
+                inteligencia.guardarRostro('icon/pacientes/', matriz, id)
+                # im = Image.fromarray((matriz).astype(np.uint8))
+                # im.save('icon/pacientes/perfil'+str(id)+'.jpg')
 
         if self.path == '/personal':
             resultado = crudpersonal.administrar_personal(data)
             print(resultado)
             if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
                 matriz = data['foto']
-                matriz = [matriz[i:i+200] for i in range(0, len(matriz), 200)]
+                matriz = matriz.split(',')
                 matriz = np.array(matriz)
+                matriz = matriz.reshape(200, 200, 3)
                 if data['accion'] == 'nuevo':
                     id = resultado[1]
                     resultado = resultado[0]
                 else:
                     id = data['id']
-                im = Image.fromarray((matriz).astype(np.uint8))
-                im.save('icon/personal/perfil'+str(id)+'.jpg')
+                # cv2.imwrite('icon/personal/perfil'+str(id)+'.jpg', matriz)
+                inteligencia.guardarRostro('icon/pacientes/',matriz, id)
+                # im = Image.fromarray((matriz).astype(np.uint8))
+                # im.save('icon/personal/perfil'+str(id)+'.jpg')
+
+        elif self.path == '/comparar':
+            foto = data['imagen']
+            imagen1 = 'icon/pacientes/rostros/rostro1.jpg'
+            imagen2 = 'icon/pacientes/rostros/rostroTemp1.jpg'
+            matriz = np.array([])
+            matriz = np.fromstring(foto, np.uint8, sep=',')
+            matriz = matriz.reshape(200, 200, 3)
+            id = 0
+            print(type(matriz))
+            resultado = inteligencia.guardarComparacion('icon/pacientes/',matriz, id)
+            # resultado = inteligencia.guardarComparacion(imagen1, imagen2)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resultado)).encode('utf-8'))
 
         elif self.path == '/proveedor':
             resultado = crudproveedor.administrar_proveedor(data)
