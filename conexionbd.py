@@ -3,7 +3,7 @@ import mysql.connector
 class conectar:
     def __init__(self):
         self.conexion = mysql.connector.connect(host="localhost", user="root",
-                                            passwd="flores", database="clinica")
+                                            passwd="admin123", database="clinica")
 
         if self.conexion.is_connected():
             print("Conectado")
@@ -18,7 +18,7 @@ class conectar:
             return resultado
         except Exception as e:
             print(e)
-            return str(e)
+            return False
 
     def ejecutar_consulta(self, sql, val):
         try:
@@ -29,7 +29,7 @@ class conectar:
             return "Registro procesado con exito"
         except Exception as e:
             print(e)
-            return str(e)
+            return False
 
     def auto_increment(self, tabla):
         try:
