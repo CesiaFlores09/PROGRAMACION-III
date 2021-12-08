@@ -115,8 +115,7 @@ class servidorBasico(SimpleHTTPRequestHandler):
             print(resultado)
             if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
                 foto = data['foto']
-                matriz = np.array([])
-                matriz = np.fromstring(foto, np.uint8, sep=',')
+                matriz = np.array([np.fromstring(foto, np.uint8, sep=',')])
                 matriz = matriz.reshape(200, 200, 3)
                 if data['accion'] == 'nuevo':
                     id = resultado[1]
@@ -124,44 +123,41 @@ class servidorBasico(SimpleHTTPRequestHandler):
                 else:
                     id = data['id']
 
-                print(type(matriz))
-                # cv2.imwrite('icon/pacientes/perfil'+str(id)+'.jpg', matriz)
-                inteligencia.guardarRostro('icon/pacientes/', matriz, id)
-                # im = Image.fromarray((matriz).astype(np.uint8))
-                # im.save('icon/pacientes/perfil'+str(id)+'.jpg')
+                inteligencia.guardar_rostro('icon/pacientes/', matriz, id)
 
         if self.path == '/personal':
             resultado = crudpersonal.administrar_personal(data)
             print(resultado)
             if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
                 matriz = data['foto']
-                matriz = matriz.split(',')
-                matriz = np.array(matriz)
+                matriz = np.array([np.fromstring(foto, np.uint8, sep=',')])
                 matriz = matriz.reshape(200, 200, 3)
                 if data['accion'] == 'nuevo':
                     id = resultado[1]
                     resultado = resultado[0]
                 else:
                     id = data['id']
-                # cv2.imwrite('icon/personal/perfil'+str(id)+'.jpg', matriz)
-                inteligencia.guardarRostro('icon/pacientes/',matriz, id)
-                # im = Image.fromarray((matriz).astype(np.uint8))
-                # im.save('icon/personal/perfil'+str(id)+'.jpg')
 
-        elif self.path == '/comparar':
-            foto = data['imagen']
-            imagen1 = 'icon/pacientes/rostros/rostro1.jpg'
-            imagen2 = 'icon/pacientes/rostros/rostroTemp1.jpg'
-            matriz = np.array([])
-            matriz = np.fromstring(foto, np.uint8, sep=',')
-            matriz = matriz.reshape(200, 200, 3)
-            id = 0
-            print(type(matriz))
-            resultado = inteligencia.guardarComparacion('icon/pacientes/',matriz, id)
-            # resultado = inteligencia.guardarComparacion(imagen1, imagen2)
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(json.dumps(dict(resp=resultado)).encode('utf-8'))
+                inteligencia.guardar_rostro('icon/pacientes/', matriz, id)
+
+        elif self.path == '/iniciar_sesion':
+            resultado = crudpaciente.identificar(data['dui'])
+            print(resultado)
+            id = int(resultado[0]['idPaciente'])
+            if resultado != False:
+                foto = data['imagen']
+                matriz = np.array([])
+                matriz = np.fromstring(foto, np.uint8, sep=',')
+                matriz = matriz.reshape(200, 200, 3)
+
+                comparar = inteligencia.iniciar_sesion('icon/pacientes/', matriz, id)
+
+                if comparar == True:
+                    resultado = True
+                else:
+                    resultado = False
+            else:
+                resultado = False
 
         elif self.path == '/proveedor':
             resultado = crudproveedor.administrar_proveedor(data)

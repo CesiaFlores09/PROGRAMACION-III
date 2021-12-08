@@ -10,6 +10,14 @@ class curdpacientes:
             Fecha['FechaNacimiento'] = Fecha['FechaNacimiento'].strftime("%d/%m/%Y")
         return usuario
 
+    def identificar(self, data):
+        sql = f"SELECT idPaciente FROM pacientes WHERE DUI='{data}'"
+        resultado = bd.consultar(sql)
+        if len(resultado) == 1:
+            return resultado
+        else:
+            return False
+
     def administrar_paciente(self, data):
         try:
             if data["accion"]=="nuevo":

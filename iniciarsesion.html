@@ -23,14 +23,19 @@
                     <div class="card-body">
                         <form id="frmLogin" class="row g-2">
                             <div class="col-auto">
+                                <label for="txtDui" class="">DUI</label>
+                                <input pattern="[0-9]{8}-[0-9]{1}" type="text" class="form-control" id="txtDui" placeholder="DUI" required>
+                            </div>
+                            <div class="col-auto">
                                 <video src="" id="fotoUsuario" width="200" height="200"></video>
                                 <canvas id="previsualizarFoto"></canvas>
-
+                            </div>
                             <div class="col-auto">
                                 <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
                                 <button id="btnCapturarRostroLogin" type="submit" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
                                 <a href="registrarse.html" class="btn btn-warning" style="border-radius: 10px; color: black; border-color: white;">Aun no tienes cuenta</a>
                           </div>
+                          <p class="" id="alerta">Alerta</p>
                         </div>
         
                         </form>
@@ -99,12 +104,19 @@
                         }
                     }
                     foto = foto.join(',');
+                    let dui = $('#txtDui').val();
                     data = {
+                        dui: dui,
                         imagen: foto
                     };
-                    $.post('http://localhost:3008/comparar', JSON.stringify(data), (resp) => {
-                        console.log(resp);
-                    });
+                    console.log(data);
+                    $.post('http://localhost:3008/iniciar_sesion', JSON.stringify(data), (resp) => {
+                        if (resp.resultado == true) {
+                            window.location.href = 'http://localhost:3008/inicio.html';
+                        } else {
+                            alert('Usuario no encontrado');
+                        }
+                    }, 'json');
                 });
             });
         </script>
