@@ -53,7 +53,9 @@
             </div>
             <div class="col-auto">
                 <video src="" id="fotoPersonal" width="200" height="200"></video>
-                <canvas id="previsualizarFotoPersonal"></canvas>
+            </div>
+            <div class="col-auto">
+                <canvas id="previsualizarFotoPersonal" hidden></canvas>
                 <img src="" alt="" id="imgPrevisualizarFotoPersonal">
             </div>
             <div class="col-auto">
@@ -76,6 +78,91 @@
     </div>
   </div>
   <script>
+        function getFullYear(year) {
+            return Number(year) >=
+            Number(new Date().getFullYear().toString().substr(-2)) + 1
+            ? '19'.concat(year)
+            : '20'.concat(year);
+        }
+        
+        function isDate(str) {
+            const year = getFullYear(str.substring(4));
+            const month = str.substring(2, 4);
+            const day = str.substring(0, 2);
+            const date = new Date(`${year}/${month}/${day}`);
+            return date && Number(date.getMonth()) + 1 === Number(month);
+        }
+        
+        function isForeignCode(code) {
+            return code.startsWith('9');
+        }
+        
+        function isNationalCode(code) {
+            if (!code.startsWith('0') && !code.startsWith('1')) return false;
+        
+            const department = code.substring(0, 2);
+            const municipality = code.substring(2);
+            return municipalitiesLookup[department] >= Number(municipality);
+        }
+        
+        function isMunicipalityCode(code) {
+            return code.length === 4 && (isForeignCode(code) || isNationalCode(code));
+        }
+
+        function isDUI(str) {
+        if (!duiRegExp.test(str)) return false;
+
+        let sum = 0;
+        const [digits, verifier] = str.split('-');
+        for (let i = 0; i < digits.length; i++) {
+            sum += Number(digits[i]) * (digits.length + 1 - i);
+        }
+
+        return Number(verifier) === (10 - (sum % 10)) % 10 && sum > 0;
+        }
+
+        function calculateNitVerificationOldFormat(digits) {
+            let sum = 0;
+            for (let i = 0; i < digits.length; i++) {
+            sum += Number(digits[i]) * (digits.length + 1 - i);
+            }
+            sum %= 11;
+            return sum;
+        }
+        
+        function calculateNitVerification(digits) {
+            let sum = 0;
+            for (let i = 0; i < digits.length; i++) {
+            sum +=
+                Number(digits[i]) * (3 + 6 * Math.floor(Math.abs((i + 5) / 6)) - (i + 1));
+            }
+            sum %= 11;
+            return sum > 1 ? 11 - sum : 0;
+        }
+        
+        function splitNIT(str) {
+            const municipality = str.substring(0, 4);
+            const birthdate = str.substring(4, 10);
+            const correlative = str.substring(10, 13);
+            const verifier = str.substring(13);
+            return [municipality, birthdate, correlative, verifier];
+        }
+        
+        function isNIT(str) {
+            if (!nitRegExp.test(str)) return false;
+        
+            const [municipality, birthdate, correlative, verifier] = str.includes('-')
+            ? str.split('-')
+            : splitNIT(str);
+            if (!isMunicipalityCode(municipality) || !isDate(birthdate)) return false;
+        
+            const digits = municipality + birthdate + correlative;
+            const sum = correlative.startsWith('0')
+            ? calculateNitVerificationOldFormat(digits)
+            : calculateNitVerification(digits);
+        
+            return Number(verifier) === sum;
+        }
       function consultarTurnos(turnos) {
         $.get("http://localhost:3008/consultar-turno", (respuesta, status) => {
             console.log(respuesta);
@@ -144,7 +231,7 @@
                 canvas.height = height;
                 context.drawImage(video, 0, 0, width, height);
 
-                data = canvas.toDataURL('image/png');
+                let data = canvas.toDataURL('image/png');
                 $("#imgPrevisualizarFotoPersonal").attr("src",data);
             }
             function limpiarDatosPersonal() {
@@ -173,15 +260,49 @@
                 iniciarVideo();
                 consultarTurnos();
                 consultarEspecialidad();
-                $("#txtDuiPersonal").on("change", function(){/** ... **/});
+                let hayfoto = false,
+                    hayDui = false,
+                    hayNit = false;
+                $("#txtDuiPersonal").on("keyup", function(){
+                    if(isDUI($(this).val())){
+                        $("#txtDuiPersonal").css("border-color", "green");
+                        $('#btnRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        hayDui = true;
+                    }else{
+                        $("#txtDuiPersonal").css("border-color", "red");
+                        $('#btnRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        hayDui = false;
+                    }
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
 
-                $("#txtNitPersonal").on("change", function(){/** ... **/});
+                $("#txtNitPersonal").on("keyup", function(){
+                    console.log(isNIT($(this).val()));
+                    if(isNIT($("#txtNitPersonal").val())){
+                        $("#txtNitPersonal").css("border-color", "green");
+                        $("#btnRegistrar").css('border-color', 'red');
+                        $("#btnCapturarRostroRegistrar").css('border-color', 'red');
+                        hayNit = true;
+                    }else{
+                        $("#txtNitPersonal").css("border-color", "red");
+                        $("#btnRegistrar").css('border-color', 'red');
+                        $("#btnCapturarRostroRegistrar").css('border-color', 'red');
+                        hayNit = false;
+                    }
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
 
                 $('#btnCapturarRostroRegistrar').on('click', function(){
                     capturarRostro();
-                    $('#btnRegistrar').prop('disabled', false);
                     $('#btnRegistrar').css('border-color', 'green');
                     $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                    hayfoto = true;
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
                 });
 
                 $("#btnBuscarPersonal").click(function(ev){
@@ -194,15 +315,14 @@
                     let canvas = $('#previsualizarFotoPersonal')[0],
                         context = canvas.getContext('2d');
                     let foto = [];
-                    for(i=0; i<200; i++){
-                        for(j=0; j< 200; j++){
+                    for(let i=0; i<200; i++){
+                        for(let j=0; j< 200; j++){
                             let imgdata = context.getImageData(j,i,1,1).data,
-                                r = imgdata[0],
-                                g = imgdata[1],
-                                b = imgdata[2];
-                            foto.push([r,g,b]);
+                            valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
+                            foto.push(valores);
                         }
                     }
+                    foto = foto.join(',');
                     let accion = $("#frmRegistrarPersonal").data("accion"),
                         id = $("#frmRegistrarPersonal").data("codigopersonal"),
                         dui = $('#txtDuiPersonal').val(),

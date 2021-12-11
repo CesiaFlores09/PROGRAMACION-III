@@ -41,9 +41,10 @@
                 filas = '';
             if(respuesta.resp.length>0){
                 respuesta.resp.forEach(personal => {
-                    personal.Turnos = personal.Turnos.split(",");
+                    console.log(personal.Turnos);
+                    turnos = personal.Turnos.split(",");
                     let horarios = '';
-                    personal.Turnos.forEach(turno => {
+                    turnos.forEach(turno => {
                         horarios += `<span class="badge badge-info text-dark"><b>${turno}</b></span>`; 
                     });
                     filas += `

@@ -1,0 +1,160 @@
+<div class="card text-white bg-secondary mb-3" id="cardTratamiento">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS TRATAMIENTOS
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardTratamiento" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarTratamiento" data-accion="nuevo" data-codigotratamiento="0" class="row g-2">
+            <div class="form-group col-md-6">
+                <label for="cboTipoTratamiento">Tipo </label>
+                <select id="cboTipoTratamiento" class="form-control form-control-sm" name="cboTipoTratamiento" required>
+                   
+                </select>
+            </div>
+           <div class="form-group col-md-6">
+                <label for="cboExamenTratamiento">Examen</label>
+                <select id="cboExamenTratamiento" name="cboExamenTratamiento" class="form-control form-control-sm" required>
+                    
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtFechaRInicioTratamiento">Fecha de Inicio</label>
+                <input type="date" id="txtFechaRInicioTratamiento" name="txtFechaRInicioTratamiento" class="form-control form-control-sm" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtFechaFinilizacionTratamiento">Fecha de Finalización</label>
+                <input type="date" id="txtFechaFinilizacionTratamiento" name="txtFechaFinilizacionTratamiento" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-auto">
+                <label for="cboEstadoTratamiento" class="">Estado</label>
+                <select name="" id="cboEstadoTratamiento" class="form-control" required>
+                    <option value="">Seleccione el estado del tratamiento</option>
+                    <option value="0">Activo</option>
+                    <option value="1">Inactivo</option>
+                    </select>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarTratamiento" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarTratamiento" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgTratamiento">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function consultarTipoTratamiento() {
+          $.get("http://localhost:3008/consultar-tipo-tratamiento", (respuesta, status) => {
+              console.log(respuesta);
+              let cboPersonal = $("#cboTipoTratamiento");
+              cboPersonal.empty();
+              cboPersonal.append("<option value=''>Seleccione un Tipo de Tratamiento</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(personal => {
+                        cboPersonal.append("<option value='" + personal.idTratamiento + "'>" + personal.Nombre + "</option>");
+                    });
+                }
+          }, "json");
+          
+      }
+
+      function consultarExamenTratamiento() {
+          $.get("http://localhost:3008/consultar-examen", (respuesta, status) => {
+              console.log(respuesta);
+              let cboExamen = $("#cboExamenTratamiento");
+              cboExamen.empty();
+              cboExamen.append("<option value=''>Seleccione el Examen</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(cita => {
+                        let estado = cita.idEstado == 0 ? "Pendiente" : cita.Estado == 1 ? "Negativo" : "Positivo";
+                        cboExamen.append(`<option value="${cita.idExamen}">${cita.FechaRealizacion}- (${cita.Nombre}) - ${estado}</option>`);
+                    });
+                }
+          }, "json");
+          
+      }
+
+      function mostrarTratamiento(tratamiento){
+          console.log(tratamiento);
+        $("#frmRegistrarTratamiento")
+            .data("accion","modificar")
+            .data("codigotratamiento",tratamiento.idTratamiento);
+        $("#cboTipoTratamiento").val(tratamiento.idTipo);
+        $("#cboExamenTratamiento").val(tratamiento.idExamen);
+        $("#txtFechaRInicioTratamiento").val(tratamiento.FechaIniciar);
+        $("#txtFechaFinilizacionTratamiento").val(tratamiento.FechaFinalizar);
+        $("#cboEstadoTratamiento").val(tratamiento.Estado);
+        }
+      
+        function limpiarDatosTratamiento(tratamiento){
+            $("#frmRegistrarTratamiento")
+                .data("accion","nuevo")
+                .data("codigotratamiento",0);
+            $("#cboTipoTratamiento").val("");
+            $("#cboExamenTratamiento").val("");
+            $("#txtFechaRInicioTratamiento").val("");
+            $("#txtFechaFinilizacionTratamiento").val("");
+            $("#cboEstadoTratamiento").val("");
+            
+        }
+
+            $(document).ready(function(){
+                consultarTipoTratamiento();
+                consultarExamenTratamiento();
+
+            $("#btnBuscarTratamiento").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("tratamientos", "buscar");
+        });
+
+                $('#frmRegistrarTratamiento').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarTratamiento").data("accion"),
+                        idTratamiento = $("#frmRegistrarTratamiento").data("codigotratamiento"),
+                        idTipo = $("#cboTipoTratamiento").val(),
+                        idExamen = $("#cboExamenTratamiento").val(),
+                        fechaInicio = $("#txtFechaRInicioTratamiento").val(),
+                        fechaFin = $("#txtFechaFinilizacionTratamiento").val(),
+                        idEstado = $("#cboEstadoTratamiento").val();
+                        data = {
+                            'accion': accion,
+                            'idTratamiento': idTratamiento,
+                            'idTipo': idTipo,
+                            'idExamen': idExamen,
+                            'fechaInicio': fechaInicio,
+                            'fechaFinal': fechaFin,
+                            'estado': parseInt(idEstado)
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/tratamiento', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosTratamiento();
+                                consultarTratamientos();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosTratamiento();
+                });
+            });
+  </script>

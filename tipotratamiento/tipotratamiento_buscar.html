@@ -1,0 +1,86 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscartipotratamiento">
+    <div class="card-header">
+        Consulta de Tipo de Tratamientos
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscartipotratamiento" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarTipoTratamiento" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="3">
+                        <input class="form-control" placeholder="Buscar tipotratamientos" type="text" 
+                            name="txtBuscarTipoTratamientos" id="txtBuscarTipoTratamientos">
+                    </th>
+                </tr>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>DESCRIPCION</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarTipoTratamientos(){
+        $.get("http://localhost:3008/consultar-tipo-tratamiento",(respuesta, status)=>{
+            $("#tblBuscarTipoTratamiento > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarTipoTratamiento = $("#tblBuscarTipoTratamiento > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(tipotratamiento => {
+                    filas += `
+                        <tr onclick='mostrarTipoTratamiento(${JSON.stringify(tipotratamiento)})'>
+                            <td>${tipotratamiento.Nombre}</td>
+                            <td>${tipotratamiento.Detalles}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarTipoTratamiento(${JSON.stringify(tipotratamiento)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay tipo de tratamiento registrado</td>
+                        </tr>`;
+            }
+            $tblBuscarTipoTratamiento.append(filas);
+        }, "json");
+    }
+    function eliminarTipoTratamiento(tipotratamiento){
+        if( confirm(`Esta seguro de eliminar el tipo de tratamiento ${tipotratamiento.Nombre}?`) ){
+            let accion = "eliminar",
+                id = tipotratamiento.idTratamiento,
+                datos = {accion,id};
+            $.post("http://localhost:3008/tipo-tratamiento",JSON.stringify(datos),(resp, status)=>{
+                $("#msgTipo_examen").removeClass("d-none").text(resp.resp);
+
+                $("#msgTipo_examen")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgTipo_examen").addClass("d-none");
+                },5000);
+                limpiarDatosTipoTratamiento();
+                consultarTipoTratamientos();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarTipoTratamientos();
+        $("#txtBuscarTipoTratamientos").keyup(function(e){
+            let valor = $(this).val(),
+                $tbltipotratamientos = $("#tblBuscarTipoTratamiento > tbody > tr");
+                $tbltipotratamientos.show();
+            let $filas = $tbltipotratamientos.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>

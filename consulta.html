@@ -19,7 +19,11 @@
 
 <body>
     <div class="container">
-        
+        <div class="row">
+            <div class="col-md-12">
+                <a href="#" class="btn btn-danger btn-lg btn-block" id="cerrarSesion">Cerrar sesión</a>
+            </div>
+        </div>
         <div class="row">
             <div class="col col-md-6">
                 <h3 class="text-purple" style= "color: peru;">Facial Access</h3>
@@ -28,136 +32,58 @@
         <div class="row">
             <div class="col col-md-2"></div>
             <div class="col col-md-8">
-                <div class="card text-white bg-secondary mb-3">
-                    <div class="card-header"style="text-align: center;">(CONSULTA) DATOS NECESARIOS</div>
-                    <div class="card-body">
-                        <form id="frmRegistrar" data-accion="nuevo" data-codigousuario="0" class="row g-2">
-
-                            <div class="col-md-8">
-                                <label for="txtDescriccion" class="">Descriccion</label>
-                                <textarea id="txtDescriccion" class="form-control" rows="10" required></textarea></div>
-                            <div class="col-md-4">
-                                <p>Sintomas</p>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="2" id="chkDolorCabeza">
-                                    <label class="form-check-label" for="chkDolorCabeza">
-                                        Dolor de Cabeza
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="3" id="chkEscalofrios">
-                                    <label class="form-check-label" for="chkEscalofrios">
-                                        Escalofrios
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="4" id="chkDolorOjos">
-                                    <label class="form-check-label" for="chkDolorOjos">
-                                        Dolor de Ojos
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="5" id="chkDolorGarganta">
-                                    <label class="form-check-label" for="chkDolorGarganta">
-                                        Dolor de Garganta
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="6" id="chkDolorEstomago">
-                                    <label class="form-check-label" for="chkDolorEstomago">
-                                        Dolor de Estomago
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    
-                                    
-                                        <input class="form-check-input" type="checkbox" value="1" id="chkFiebre">
-                                        <label class="form-check-label" for="chkFiebre">
-                                            Fiebre
-                                        </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="6" id="chkDolorEstomago">
-                                    <label class="form-check-label" for="chkDolorEstomago">
-                                        Otros (Especifique)
-                                    </label>
-                                    <input type="text" class="form-control" id="txtOtros" placeholder="Especifique">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <p>Padecimientos previos</p>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="2" id="chkEnfrmedad1">
-                                    <label class="form-check-label" for="chkEnfrmedad1">
-                                        Enfermedad1
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="3" id="chkEnfrmedad2">
-                                    <label class="form-check-label" for="chkEnfrmedad2">
-                                        Enfermedad2
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="4" id="chkEnfrmedad3">
-                                    <label class="form-check-label" for="chkEnfrmedad3">
-                                        Enfermedad3
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="5" id="chkEnfrmedad4">
-                                    <label class="form-check-label" for="chkEnfrmedad4">
-                                        Enfermedad4
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="6" id="chkEnfrmedad5">
-                                    <label class="form-check-label" for="chkEnfrmedad5">
-                                        Enfermedad5
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    
-                                    
-                                        <input class="form-check-input" type="checkbox" value="1" id="chkEnfrmedad6">
-                                        <label class="form-check-label" for="chkEnfrmedad6">
-                                            Enfermedad6
-                                        </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="6" id="chkEnfrmedadOtro">
-                                    <label class="form-check-label" for="chkEnfrmedadOtro">
-                                        Otros (Especifique)
-                                    </label>
-                                    <input type="text" class="form-control" id="chkEnfrmedadOtro" placeholder="Especifique">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="txtFechaCita" class="">Tipo de consulta</label>
-                                <select name="" id="txtFechaCita" class="form-control" required>
-                                    <option value="1">20-11-2021 7:00</option>
-                                    <option value="2">20-11-2021 7:20</option>
-                                    <option value="3">20-11-2021 7:40</option>
-                                    <option value="4">20-11-2021 7:60</option>
-                                    <option value="5">20-11-2021 7:80</option>
-                                    <option value="6">20-11-2021 8:00</option>
-                                </select>
+                <div class="card text-white bg-secondary mb-3" id="cardCita">
+                    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS CITAS
+                <div class="card-body">
+                        <form id="frmRegistrarCita" data-accion="nuevo-usuario" data-codigocita="0" class="row g-2">
+                            <div class="col-auto">
+                                <label for="cboHorarioCita" class="">Horario</label>
+                                <select name="" id="cboHorarioCita" class="form-control" required>
+                                    </select>
                             </div>
                             <div class="col-auto">
-                                <label for="fotoUsuario" class="">Fotografia</label>
-                                <video src=""></video>
+                                <label for="cboPersonalCita" class="">Personal</label>
+                                <select name="" id="cboPersonalCita" class="form-control" required>
+                                    <option value="">Seleccione un horario primero</option>
+                                    </select>
                             </div>
-                            <div class="row">
-                                <div class="col-auto">
-                                    <button id="btnRegistrar" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: white;">Realizar Consulta</button>
-                                  </div>
-                                  <div class="col-auto">
-                                    <a href="inicio.html" class="btn btn-danger mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: white;">Cancelar</a>
-                                  </div>
+                            <div class="col-auto">
+                                <label for="cboDiaCita" class="">Dia</label>
+                                <select name="" id="cboDiaCita" class="form-control" required>
+                                    <option value="">Seleccione un horario primero</option>
+                                    </select>
+                            </div>
+                            <div class="col-auto">
+                                <label for="cboHoraCita" class="">Hora</label>
+                                <select name="" id="cboHoraCita" class="form-control" required>
+                                    <option value="">Seleccione un horario primero</option>
+                                    </select>
+                            </div>
+                            <div class="col-auto">
+                                <label for="cboSintomasCita" class="">Sintomas</label>
+                                <select name="" id="cboSintomasCita" class="form-control" required multiple>
+                                    </select>
+                            </div>
+                
+                            <div class="col-auto">
+                                <label for="txtDescripcionCita" class="">Observaciones</label>
+                                <textarea class="form-control" id="txtDescripcionCita" placeholder="Descripción"></textarea>
+                            </div>
+                            <div class="col-auto">
+                                <button id="btnRegistrarCita" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Realizar Consulta</button>
+                                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                                <a href="inicio.html" class="btn btn-danger mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: white;">Cancelar</a>
                             </div>
                         </form>
                         <div class="row g-2">
-                            <div id="msgUsuario" class="alert alert-success d-none" role="alert"></div>
+                            <div class="col-auto" id="alerta">
+                                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgCita">
+                                    <strong></strong> <span></span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                       X
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                   </div>
@@ -177,8 +103,238 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
    
     <script>
-        $(document).ready(function(){
+       function acceder() {
+            $.get('http://localhost:3008/permitir-entrada-paciente', function(data) {
+                if (data.resp == true) {
+                        console.log("acceso permitido");
+                    } else {
+                        window.location.href = "index.html";
+                    }
+            }, 'json');
+        }
+        function consultarSintomasCita(turnos) {
+            $.get("http://localhost:3008/consultar-sintoma", (respuesta, status) => {
+                console.log(respuesta);
+                let cboSintomasCita = $("#cboSintomasCita");
+                let html = "";
+                cboSintomasCita.empty();
+                cboSintomasCita.append("<option value=''>Seleccione los sintimas de trabajo</option>");
+                respuesta.resp.forEach(turno => {
+                    cboSintomasCita.append(`<option value="${turno.idSintoma}">${turno.Nombre}--${turno.Detalles})</option>`);
+                });
+            }, "json");
             
+        }
+
+      function consultarTurnosCita(turnos) {
+        $.get("http://localhost:3008/consultar-turno", (respuesta, status) => {
+            console.log(respuesta);
+            let cboTurno = $("#cboHorarioCita");
+            let html = "";
+            cboTurno.empty();
+            cboTurno.append("<option value=''>Seleccione los turnos de trabajo</option>");
+            respuesta.resp.forEach(turno => {
+                cboTurno.append(`<option value="${turno.idTurno}" data-diade="${turno.DiaInicio}" data-diaa="${turno.DiaSalida}" data-horade="${turno.HoraInicio}" data-horaa="${turno.HoraSalida}">${turno.HoraInicio}(${turno.DiaInicio})-${turno.HoraSalida}(${turno.DiaSalida})</option>`);
+            });
+        }, "json");
+          
+    }
+      function limpiarDatosCita(cita){
+            $("#frmRegistrarCita")
+                .data("accion","nuevo")
+                .data("codigocita",0);
+            $("#cboPacienteCita").val("");
+            $("#cboPersonalCita").val("");
+            $("#cboHorarioCita").val("");
+            $("#cboDiaCita").val("");
+            $("#cboHoraCita").val("");
+            $("#cboSintomasCita").val("");
+        }
+            
+        $(document).ready(function(){
+            acceder();
+            consultarSintomasCita();
+            consultarTurnosCita();
+
+            $('#cerrarSesion').click(function(){
+                console.log("cerrando sesion");
+                $.post('http://localhost:3008/cerrar_sesion', JSON.stringify({}), function(data) {
+                    if (data.resultado == true) {
+                            window.location.href = "index.html";
+                        } else {
+                            console.log("Algo falló al cerrar la sesion");
+                        }
+                }, 'json');
+            });
+
+            $('#cboHorarioCita').change(function(){
+                let fechaInicio = new Date();
+                let fechaFin = new Date();
+                console.log(fechaInicio);
+                let diasIngles = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                let diasEspanol = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"];
+
+                let diaInicio = $("#cboHorarioCita option:selected").data("diade");
+                let diaFinal = $("#cboHorarioCita option:selected").data("diaa");
+
+                diaInicio = diaInicio == "Domingo" ? 0 : diaInicio == "Lunes" ? 1 : diaInicio == "Martes" ? 2 : diaInicio == "Miercoles" ? 3 : diaInicio == "Jueves" ? 4 : diaInicio == "Viernes" ? 5 : 6;
+                diaFinal = diaFinal == "Domingo" ? 0 : diaFinal == "Lunes" ? 1 : diaFinal == "Martes" ? 2 : diaFinal == "Miercoles" ? 3 : diaFinal == "Jueves" ? 4 : diaFinal == "Viernes" ? 5 : 6;
+
+                let diaActualTexto = fechaInicio.toString().split(" ")[0];
+                let diaFinalTexto = fechaFin.toString().split(" ")[0];
+
+                diaActualTexto = diaActualTexto == "Sun" ? 0 : diaActualTexto == "Mon" ? 1 : diaActualTexto == "Tue" ? 2 : diaActualTexto == "Wed" ? 3 : diaActualTexto == "Thu" ? 4 : diaActualTexto == "Fri" ? 5 : 6;
+                diaFinalTexto = diaFinalTexto == "Sun" ? 0 : diaFinalTexto == "Mon" ? 1 : diaFinalTexto == "Tue" ? 2 : diaFinalTexto == "Wed" ? 3 : diaFinalTexto == "Thu" ? 4 : diaFinalTexto == "Fri" ? 5 : 6;
+
+                if(diaFinal > diaInicio){
+                    fechaFin.setDate(fechaFin.getDate() + (diaFinal - diaInicio));
+                }
+                console.log(fechaInicio, fechaFin);
+
+                let inicio = diaActualTexto;
+                let final = diaInicio;
+
+                while (inicio != final) {
+                    fechaInicio.setDate(fechaInicio.getDate() + 1);
+                    if (inicio == 6) {
+                        inicio = 0;
+                    } else {
+                        inicio++;
+                    }
+                }
+                inicio = diaActualTexto;
+                final = diaFinal;
+
+                if (diaFinal == diaActualTexto && diaFinal > diaInicio) {
+                    inicio = final;
+                }
+                while (inicio != final) {
+                    fechaFin.setDate(fechaFin.getDate() + 1);
+                    if (inicio == 6) {
+                        inicio = 0;
+                    } else {
+                        inicio++;
+                    }
+                }
+
+                let de = fechaInicio.toString().split(" ")[0];
+                let a = fechaFin.toString().split(" ")[0];
+                de = de == "Sun" ? 0 : de == "Mon" ? 1 : de == "Tue" ? 2 : de == "Wed" ? 3 : de == "Thu" ? 4 : de == "Fri" ? 5 : 6;
+                a = a == "Sun" ? 0 : a == "Mon" ? 1 : a == "Tue" ? 2 : a == "Wed" ? 3 : a == "Thu" ? 4 : a == "Fri" ? 5 : 6;
+                diferencia = a - de;
+                $("#cboDiaCita").html("");
+                $("#cboDiaCita").append("<option value=''>Seleccione los dias de trabajo</option>");
+                for (let i = 0; i < diferencia; i++) {
+                    let fecha = new Date();
+                    fecha.setDate(fechaInicio.getDate() + i);
+                    let dia = diasEspanol[fecha.getDay()];
+                    let diaTexto = diasIngles[fecha.getDay()];
+                    let diaNumero = fecha.getDate();
+                    let mes = fecha.getMonth() + 1;
+                    let anio = fecha.getFullYear();
+                    let fechaTexto = diaNumero + "/" + mes + "/" + anio;
+                    $("#cboDiaCita").append(`<option value="${fechaTexto}">${dia + " " + fechaTexto}</option>`);
+                }
+                    let horaInicio = $("#cboHorarioCita option:selected").data("horade").split(":")[0];
+                    let horaFinal = $("#cboHorarioCita option:selected").data("horaa").split(":")[0];
+                    let intervaloInicio = 30;
+                    $("#cboHoraCita").html("");
+                    $("#cboHoraCita").append(`<option value="">Seleccione una hora</option>`);
+                    for (i = horaInicio; i <= 24; i++) {
+                        for (j = 0; j < 2; j++) {
+                            if (i == 0) {
+                                h = 12;
+                            } else {
+                                h = i;
+                            }
+                            if ((j * intervaloInicio) < 10) {
+                                m = "0" + (j * intervaloInicio);
+                            } else {
+                                m = j * intervaloInicio;
+                            }
+                            let hora = h + ":" + m;
+                            $("#cboHoraCita").append(`<option value="${hora}">${hora}</option>`);
+                        }
+                    }
+                    for (i = 0; i < horaFinal; i++) {
+                        for (j = 0; j < 2; j++) {
+                            if (i == 0) {
+                                h = 12;
+                            } else {
+                                h = i;
+                            }
+                            if ((j * intervaloInicio) < 10) {
+                                m = "0" + (j * intervaloInicio);
+                            } else {
+                                m = j * intervaloInicio;
+                            }
+                            let hora = h + ":" + m;
+                            $("#cboHoraCita").append(`<option value="${hora}">${hora}</option>`);
+                        }
+                    }
+                let idTurno = $("#cboHorarioCita").val();
+                
+                $.post("http://localhost:3008/consultar-personal-turno", JSON.stringify({idTurno}), (respuesta, status) => {
+                    console.log(respuesta);
+                    let cboPersonalCita = $("#cboPersonalCita");
+                    cboPersonalCita.empty();
+                    cboPersonalCita.append("<option value=''>Seleccione un Personal</option>");
+                    respuesta.resultado.forEach(personal => {
+                        cboPersonalCita.append("<option value='" + personal.idPersonal + "'>" + personal.Nombre + "</option>");
+                    });
+                }, "json");
+            });
+
+            $('#frmRegistrarCita').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarCita").data("accion"),
+                        id = $("#frmRegistrarCita").data("codigocita"),
+                        idUsuario = $("#cboPacienteCita").val(),
+                        idPersonal = $("#cboPersonalCita").val(),
+                        fechaHora = $("#cboDiaCita").val() + " " + $("#cboHoraCita").val(),
+                        detalles = $("#txtDescripcionCita").val(),
+                        sintomas = $("#cboSintomasCita").val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'idPaciente': idUsuario,
+                            'idPersonal': idPersonal,
+                            'fecha': fechaHora,
+                            'detalles': detalles,
+                            'sintomas': sintomas
+                        };
+                        let fechaHoraSplit = fechaHora.split(" ");
+                        let fecha = fechaHoraSplit[0].split("/");
+                        let hora = fechaHoraSplit[1].split(":");
+                        let fechaHoraBaseDatos = fecha[2] + "-" + fecha[1] + "-" + fecha[0] + " " + hora[0] + ":" + hora[1] + ":00";
+                        data.fecha = fechaHoraBaseDatos;
+                        // Convertir los sintomas a int
+                        data.sintomas.forEach(sintoma => {
+                            sintoma = parseInt(sintoma);
+                        });
+                    console.log(data);
+                    $.post('http://localhost:3008/cita', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosCita();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosCita();
+                });
         });
     </script>
 

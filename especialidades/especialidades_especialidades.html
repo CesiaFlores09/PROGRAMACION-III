@@ -1,11 +1,11 @@
 <div class="card text-white bg-secondary mb-3" id="cardEspecialidad">
-    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS ESPECIALIDADES
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardEspecialidad" aria-label="Close"></button></div>
     <div class="card-body">
         <form id="frmRegistrarEspecialidad" data-accion="nuevo" data-codigoespecialidad="0" class="row g-2">
            <div class="form-group col-md-6">
                 <label for="txtNombreEspecialidad">Nombre del Especialidad</label>
-                <input pattern="[A-Za-z0-9]{1,}" type="text" id="txtNombreEspecialidad" name="txtNombreEspecialidad" class="form-control form-control-sm" placeholder="Nombre del Especialidad" required>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" id="txtNombreEspecialidad" name="txtNombreEspecialidad" class="form-control form-control-sm" placeholder="Nombre del Especialidad" required>
             </div>
             <div class="col-auto">
                 <button id="btnRegistrarEspecialidad" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>

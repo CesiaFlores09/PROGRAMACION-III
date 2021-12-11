@@ -1,5 +1,5 @@
 <div class="card text-white bg-secondary mb-3" id="cardMedicamento">
-    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS MEDICAMENTOS
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardMedicamento" aria-label="Close"></button></div>
     <div class="card-body">
         <form id="frmRegistrarMedicamento" data-accion="nuevo" data-codigomedicamento="0" class="row g-2">
@@ -14,11 +14,11 @@
             </div>
             <div class="col-auto">
                 <label for="txtPrecioMedicamento" class="">Precio</label>
-              <input pattern="^[0-9]+(\.[0-9]{1,2})?$" type="text" class="form-control" id="txtPrecioMedicamento" placeholder="$0.00" required>
+              <input pattern="^[0-9]+(\.[0-9]{1,2})?$" type="number" class="form-control" id="txtPrecioMedicamento" placeholder="$0.00" required step="0.01">
             </div>
             <div class="col-auto">
                 <label for="txtCantidadMedicamento" class="">Cantidad</label>
-                <input pattern="^[0-9]{1,5}$" type="text" class="form-control" id="txtCantidadMedicamento" placeholder="0" required>
+                <input pattern="^[0-9]{1,5}$" type="number" class="form-control" id="txtCantidadMedicamento" placeholder="0" required>
             </div>
             <div class="col-auto">
                 <button id="btnRegistrarMedicamento" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>

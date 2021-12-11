@@ -1,0 +1,87 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarTipo_examen">
+    <div class="card-header">
+        Consulta de Tipo de Examenes
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarTipo_examen" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarTipoExamen" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="3">
+                        <input class="form-control" placeholder="Buscar tipoexamenes" type="text" 
+                            name="txtBuscarTipoExamenes" id="txtBuscarTipoExamenes">
+                    </th>
+                </tr>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>DESCRIPCION</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarTipoExamenes(){
+        $.get("http://localhost:3008/consultar-tipo-examen",(respuesta, status)=>{
+            $("#tblBuscarTipoExamen > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarTipoExamen = $("#tblBuscarTipoExamen > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(tipoexamen => {
+                    filas += `
+                        <tr onclick='mostrarTipoExamen(${JSON.stringify(tipoexamen)})'>
+                            <td>${tipoexamen.Nombre}</td>
+                            <td>${tipoexamen.Detalles}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarTipoExamen(${JSON.stringify(tipoexamen)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay tipo de examen registrado</td>
+                        </tr>`;
+            }
+            $tblBuscarTipoExamen.append(filas);
+        }, "json");
+    }
+    function eliminarTipoExamen(tipoexamen){
+        if( confirm(`Esta seguro de eliminar el tipo de examen ${tipoexamen.Nombre}?`) ){
+            let accion = "eliminar",
+                id = tipoexamen.idTipo,
+                datos = {accion,id};
+            $.post("http://localhost:3008/tipo-examen",JSON.stringify(datos),(resp, status)=>{
+                $("#msgTipo_examen").removeClass("d-none").text(resp.resp);
+
+                $("#msgTipo_examen")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgTipo_examen").addClass("d-none");
+                },5000);
+                limpiarDatosTipoExamen();
+                consultarTipoExamenes();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarTipoExamenes();
+        $("#txtBuscarTipoExamenes").keyup(function(e){
+            let valor = $(this).val(),
+                $tbltipoexamenes = $("#tblBuscarTipoExamen > tbody > tr");
+                $tbltipoexamenes.show();
+            let $filas = $tbltipoexamenes.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>

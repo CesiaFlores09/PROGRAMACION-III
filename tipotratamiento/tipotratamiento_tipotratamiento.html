@@ -1,0 +1,94 @@
+<div class="card text-white bg-secondary mb-3" id="cardtipotratamiento">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS TIPO TRATAMIENTOS
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardtipotratamiento" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarTipoTratamiento" data-accion="nuevo" data-codigotipotipotratamiento="0" class="row g-2">
+           <div class="form-group col-md-6">
+                <label for="txtNombreTipoTratamiento">Nombre del tipo de tratamiento</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" id="txtNombreTipoTratamiento" name="txtNombreTipoTratamiento" class="form-control form-control-sm" placeholder="Nombre del tipotratamiento" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtDescripcionTipoTratamiento">Descripción del tipo de tratamiento</label>
+                <textarea id="txtDescripcionTipoTratamiento" name="txtDescripcionTipoTratamiento" class="form-control form-control-sm" placeholder="Descripción del tipotratamiento" required></textarea>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrartipotratamiento" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscartipotratamiento" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgtipotratamiento">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarTipoTratamiento(tipotratamiento){
+        $("#frmRegistrarTipoTratamiento")
+            .data("accion","modificar")
+            .data("codigotipotipotratamiento",tipotratamiento.idtipotratamiento);
+        $("#txtNombreTipoTratamiento").val(tipotratamiento.Nombre);
+        $("#txtDescripcionTipoTratamiento").val(tipotratamiento.Detalles);
+        }
+      
+        function limpiarDatosTipoTratamiento(tipotratamiento){
+            $("#frmRegistrarTipoTratamiento")
+                .data("accion","nuevo")
+                .data("codigotipotipotratamiento",0);
+            $("#txtNombreTipoTratamiento").val("");
+            $("#txtDescripcionTipoTratamiento").val("");
+        }
+
+            $(document).ready(function(){
+
+                
+            $("#btnBuscartipotratamiento").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("tipotratamiento", "buscar");
+        });
+
+                $('#frmRegistrarTipoTratamiento').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarTipoTratamiento").data("accion"),
+                        id = $("#frmRegistrarTipoTratamiento").data("codigotipotipotratamiento"),
+                        nombre = $('#txtNombreTipoTratamiento').val(),
+                        detalles = $('#txtDescripcionTipoTratamiento').val();
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre,
+                            'detalles': detalles
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/tipo-tratamiento', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosTipoTratamiento();
+                                consultarTipoTratamientos();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosTipoTratamiento();
+                });
+            });
+  </script>

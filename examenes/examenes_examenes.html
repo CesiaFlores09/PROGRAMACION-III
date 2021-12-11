@@ -1,0 +1,225 @@
+<div class="card text-white bg-secondary mb-3" id="cardExamen">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS EXAMENES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardExamen" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarExamen" data-accion="nuevo" data-codigoexamen="0" class="row g-2">
+            <div class="form-group col-md-6">
+                <label for="cboTipoExamen">Tipo </label>
+                <select id="cboTipoExamen" class="form-control form-control-sm" name="cboTipoExamen" required>
+                   
+                </select>
+            </div>
+           <div class="form-group col-md-6">
+                <label for="cboCitaExamen">Cita</label>
+                <select id="cboCitaExamen" name="cboCitaExamen" class="form-control form-control-sm" required>
+                    
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtFechaRealizacionExamen">Realización</label>
+                <input type="date" id="txtFechaRealizacionExamen" name="txtFechaRealizacionExamen" class="form-control form-control-sm" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtFechaEntregaExamen">Entrega de resultados</label>
+                <input type="date" id="txtFechaEntregaExamen" name="txtFechaEntregaExamen" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-auto">
+                <label for="cboEnfermedades" class="">Enfermedad</label>
+                <select name="" id="cboEnfermedades" class="form-control" required>
+                    </select>
+            </div>
+            <div class="col-auto">
+                <label for="cboEstadoExamen" class="">Estado</label>
+                <select name="" id="cboEstadoExamen" class="form-control" required>
+                    <option value="">Seleccione el estado del examen</option>
+                    <option value="0">Pendiente</option>
+                    <option value="1" disabled>Negativo</option>
+                    <option value="2" disabled>Positivo</option>
+                    </select>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarExamen" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarExamen" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgExamen">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function consultarTipoExamen() {
+          $.get("http://localhost:3008/consultar-tipo-examen", (respuesta, status) => {
+              console.log(respuesta);
+              let cboPersonal = $("#cboTipoExamen");
+              cboPersonal.empty();
+              cboPersonal.append("<option value=''>Seleccione un Tipo de Examen</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(personal => {
+                        cboPersonal.append("<option value='" + personal.idTipo + "'>" + personal.Nombre + "</option>");
+                    });
+                }
+          }, "json");
+          
+      }
+
+      function consultarCitaExamen() {
+          $.get("http://localhost:3008/consultar-cita", (respuesta, status) => {
+              console.log(respuesta);
+              let cboCita = $("#cboCitaExamen");
+              cboCita.empty();
+              cboCita.append("<option value=''>Seleccione la Cita</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(cita => {
+                        let dia = cita.FechaCita.split(" ")[0];
+                        let hora = cita.FechaCita.split(" ")[1];
+                        cboCita.append(`<option value="${cita.idConsulta}" data-fecha="${dia}">${dia}-${hora}  (${cita.idPaciente}) ${cita.paciente}</option>`);
+                    });
+                }
+          }, "json");
+          
+      }
+
+      function consultarPacienteExamen() {
+          $.get("http://localhost:3008/consultar-paciente", (respuesta, status) => {
+              console.log(respuesta);
+              let cboPaciente = $("#cboPacienteExamen");
+              cboPaciente.empty();
+              cboPaciente.append("<option value=''>Seleccione un Paciente</option>");
+               if(respuesta.resp.length>0){
+                    respuesta.resp.forEach(paciente => {
+                        cboPaciente.append("<option value='" + paciente.idPaciente + "'>" + paciente.Nombre + "</option>");
+                    });
+                }
+            }, "json");
+      }
+      function consultarEnfermedadesExamen() {
+            $.get("http://localhost:3008/consultar-enfermedad", (respuesta, status) => {
+                console.log(respuesta);
+                let cboEnfermedades = $("#cboEnfermedades");
+                cboEnfermedades.empty();
+                cboEnfermedades.append("<option value=''>Seleccione una Enfermedad</option>");
+                 if(respuesta.resp.length>0){
+                        respuesta.resp.forEach(enfermedad => {
+                            cboEnfermedades.append(`<option value="${enfermedad.idEnfermedad}" data-estado="0">${enfermedad.Nombre}</option>`);
+                        });
+                    }
+                }, "json");
+      }
+      function mostrarExamen(examen){
+        $("#frmRegistrarExamen")
+            .data("accion","modificar")
+            .data("codigoexamen",examen.idExamen);
+        $("#cboTipoExamen").val(examen.idTipoExamen);
+        $("#cboPacienteExamen").val(examen.idPaciente);
+        $("#cboCitaExamen").val(examen.idCita);
+        $("#txtFechaRealizacionExamen").val(examen.FechaRealizacion);
+        $("#txtFechaEntregaExamen").val(examen.FechaResultados);
+        $("#cboEstadoExamen").val(examen.Estado);
+        let enfermedades = examen.enfermedades.split(",");
+        $("#cboEnfermedades").val(enfermedades);
+
+        $("#cboEstadoExamen option[value='0']").prop("disabled",true);
+        $("#cboEstadoExamen option[value='1']").prop("disabled",false);
+        $("#cboEstadoExamen option[value='2']").prop("disabled",false);
+        }
+      
+        function limpiarDatosExamen(examen){
+            $("#frmRegistrarExamen")
+                .data("accion","nuevo")
+                .data("codigoexamen",0);
+            $("#cboMedicoExamen").val("");
+            $("#cboPacienteExamen").val("");
+            $("#cboMedicamentosExamen").val("");
+            $("#txtFechaRealizacionExamen").val("");
+            $("#txtFechaEntregaExamen").val("");
+            $("#cboEstadoExamen").val("");
+            $("#cboEnfermedades").val("");
+            $("#cboEstadoExamen option[value='0']").prop("disabled",false);
+            $("#cboEstadoExamen option[value='1']").prop("disabled",true);
+            $("#cboEstadoExamen option[value='2']").prop("disabled",true);
+            
+        }
+
+            $(document).ready(function(){
+                consultarTipoExamen();
+                consultarCitaExamen();
+                consultarEnfermedadesExamen();
+
+                $("#cboCitaExamen").change(function(){
+                    let fecha = $(this).find("option:selected").data("fecha");
+                    fecha = fecha.split("/");
+                    fecha = fecha[2] + "-" + fecha[1] + "-" + fecha[0];
+                    let fechaActual = new Date();
+                    if(fecha < fechaActual){
+                        $("#txtFechaRealizacionExamen").attr("min", fechaActual);
+                        $("#txtFechaRealizacionExamen").attr("value", fechaActual);
+                    } else {
+                        $("#txtFechaRealizacionExamen").attr("min",fecha);
+                        $("#txtFechaEntregaExamen").attr("min",fecha);
+                    }
+                });
+
+                $("#cboEnfermedades").change(function(){
+                    let estado = $(this).find("option:selected").data("estado");
+                    $("#cboEstadoEnfermedadExamen").val(estado);
+                });
+            $("#btnBuscarExamen").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("examenes", "buscar");
+        });
+
+                $('#frmRegistrarExamen').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarExamen").data("accion"),
+                        id = $("#frmRegistrarExamen").data("codigoexamen"),
+                        idTipoExamen = $("#cboTipoExamen").val(),
+                        idCita = $("#cboCitaExamen").val(),
+                        fechaRealizacion = $("#txtFechaRealizacionExamen").val(),
+                        fechaResultados = $("#txtFechaEntregaExamen").val(),
+                        estado = $("#cboEstadoExamen").val(),
+                        enfermedades = $("#cboEnfermedades").val(),
+                        data = {
+                            'accion': accion,
+                            'idExamen': id,
+                            'idTipoExamen': idTipoExamen,
+                            'idCita': idCita,
+                            'fechaRealizacion': fechaRealizacion,
+                            'fechaResultados': fechaResultados,
+                            'estado': estado,
+                            'enfermedades': enfermedades
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/examen', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosExamen();
+                                consultarExamenes();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosExamen();
+                });
+            });
+  </script>
