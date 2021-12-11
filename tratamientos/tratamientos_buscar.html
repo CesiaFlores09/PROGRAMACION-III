@@ -1,0 +1,101 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarTratamiento">
+    <div class="card-header">
+        Consulta de Tratamientos
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarTratamiento" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarTratamiento" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="7">
+                        <input class="form-control" placeholder="Buscar tratamientos" type="text" 
+                            name="txtBuscarTratamientos" id="txtBuscarTratamientos">
+                    </th>
+                </tr>
+                <tr>
+                    <th>TIPO DE TRATAMIENTO</th>
+                    <th>EXAMEN</th>
+                    <th>FECHA INICIO</th>
+                    <th>FECHA FIN</th>
+                    <th>ESTADO</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarTratamientos(){
+        $.get("http://localhost:3008/consultar-tratamiento",(respuesta, status)=>{
+            $("#tblBuscarTratamiento > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarTratamiento = $("#tblBuscarTratamiento > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(tratamiento => {
+                    let estadotratamiento = '';
+                    if (tratamiento.Estado == 0) {
+                        estadotratamiento = "Activo"
+                    } else {
+                        estadotratamiento = "Inactivo"
+                    }
+
+                    filas += `
+                        <tr onclick='mostrarTratamiento(${JSON.stringify(tratamiento)})'>
+                            <td>${tratamiento.nombreTratamiento}</td>
+                            <td>[${tratamiento.nombreExamen}]${tratamiento.Nombre}</td>
+                            <td>${tratamiento.FechaIniciar}</td>
+                            <td>${tratamiento.FechaFinalizar}</td>
+                            <td><span class="badge badge-pill badge-info text-dark">${estadotratamiento}</span></td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarTratamiento(${JSON.stringify(tratamiento)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay tratamientos registrados</td>
+                        </tr>`;
+            }
+            $tblBuscarTratamiento.append(filas);
+        }, "json");
+    }
+    function eliminarTratamiento(tratamiento){
+        if( confirm(`Esta seguro de eliminar el tratamiento ${tratamiento.nombreTratamiento}?`) ){
+            let accion = "eliminar",
+            idTratamiento = tratamiento.idTratamiento,
+                datos = {accion,idTratamiento};
+                console.log(datos);
+            $.post("http://localhost:3008/tratamiento",JSON.stringify(datos),(resp, status)=>{
+                $("#msgUsuario").removeClass("d-none").text(resp.resp);
+
+                $("#msgUsuario")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgUsuario").addClass("d-none");
+                },5000);
+                limpiarDatosTratamiento();
+                consultarTratamientos();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarTratamientos();
+        $("#txtBuscarTratamientos").keyup(function(e){
+            let valor = $(this).val(),
+                $tbltratamientos = $("#tblBuscarTratamiento > tbody > tr");
+                $tbltratamientos.show();
+            let $filas = $tbltratamientos.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>

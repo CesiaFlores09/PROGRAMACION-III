@@ -1,0 +1,94 @@
+<div class="card text-white bg-secondary mb-3" id="cardTipo_Examen">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS TIPO EXAMENES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardTipo_Examen" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarTipoExamen" data-accion="nuevo" data-codigotipotipoexamen="0" class="row g-2">
+           <div class="form-group col-md-6">
+                <label for="txtNombreTipoExamen">Nombre del tipo de examen</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" id="txtNombreTipoExamen" name="txtNombreTipoExamen" class="form-control form-control-sm" placeholder="Nombre del Tipo_Examen" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtDescripcionTipoExamen">Descripción del tipo de examen</label>
+                <textarea id="txtDescripcionTipoExamen" name="txtDescripcionTipoExamen" class="form-control form-control-sm" placeholder="Descripción del Tipo_Examen" required></textarea>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarTipo_Examen" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarTipo_Examen" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgTipo_Examen">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarTipoExamen(tipo_tipo_examen){
+        $("#frmRegistrarTipoExamen")
+            .data("accion","modificar")
+            .data("codigotipotipoexamen",tipo_tipo_examen.idTipo_Examen);
+        $("#txtNombreTipoExamen").val(tipo_tipo_examen.Nombre);
+        $("#txtDescripcionTipoExamen").val(tipo_tipo_examen.Detalles);
+        }
+      
+        function limpiarDatosTipoExamen(tipo_tipo_examen){
+            $("#frmRegistrarTipoExamen")
+                .data("accion","nuevo")
+                .data("codigotipotipoexamen",0);
+            $("#txtNombreTipoExamen").val("");
+            $("#txtDescripcionTipoExamen").val("");
+        }
+
+            $(document).ready(function(){
+
+                
+            $("#btnBuscarTipo_Examen").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("tipoexamen", "buscar");
+        });
+
+                $('#frmRegistrarTipoExamen').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarTipoExamen").data("accion"),
+                        id = $("#frmRegistrarTipoExamen").data("codigotipotipoexamen"),
+                        nombre = $('#txtNombreTipoExamen').val(),
+                        detalles = $('#txtDescripcionTipoExamen').val();
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre,
+                            'detalles': detalles
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/tipo-examen', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosTipoExamen();
+                                consultarTipoExamenes();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosTipoExamen();
+                });
+            });
+  </script>

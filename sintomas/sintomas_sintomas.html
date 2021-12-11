@@ -1,0 +1,94 @@
+<div class="card text-white bg-secondary mb-3" id="cardSintoma">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS SINTOMAS
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardSintoma" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarSintoma" data-accion="nuevo" data-codigosintoma="0" class="row g-2">
+           
+            <div class="col-auto">
+                <label for="txtNombreSintoma" class="">Nombre</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombreSintoma" placeholder="Dolor De Cabeza" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtDescripcionSintoma" class="">Descripción</label>
+                <textarea class="form-control" id="txtDescripcionSintoma" placeholder="Descripción" required></textarea>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarSintoma" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarSintoma" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgSintoma">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function mostrarSintoma(sintoma){
+        $("#frmRegistrarSintoma")
+            .data("accion","modificar")
+            .data("codigosintoma",sintoma.idSintoma);
+        $("#txtNombreSintoma").val(sintoma.Nombre);
+        $("#txtDescripcionSintoma").val(sintoma.Detalles);
+        }
+      
+        function limpiarDatosSintoma(sintoma){
+            $("#frmRegistrarSintoma")
+                .data("accion","nuevo")
+                .data("codigosintoma",0);
+            $("#txtNombreSintoma").val("");
+            $("#txtDescripcionSintoma").val("");
+        }
+
+            $(document).ready(function(){
+
+            $("#btnBuscarSintoma").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("sintomas", "buscar");
+        });
+
+                $('#frmRegistrarSintoma').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarSintoma").data("accion"),
+                        id = $("#frmRegistrarSintoma").data("codigosintoma"),
+                        nombre = $('#txtNombreSintoma').val(),
+                        detalles = $('#txtDescripcionSintoma').val();
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre,
+                            'detalles': detalles
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/sintoma', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosSintoma();
+                                consultarSintomas();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosSintoma();
+                });
+            });
+  </script>

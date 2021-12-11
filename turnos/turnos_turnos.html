@@ -1,11 +1,11 @@
 <div class="card text-white bg-secondary mb-3" id="cardTurno">
-    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS TURNOS
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardTurno" aria-label="Close"></button></div>
     <div class="card-body">
         <form id="frmRegistrarTurno" data-accion="nuevo" data-codigoturno="0" class="row g-2">
            <div class="form-group col-md-6">
                 <label for="txtNombreTurno">Nombre del Turno</label>
-                <input type="text" id="txtNombreTurno" name="txtNombreTurno" class="form-control form-control-sm" placeholder="Nombre del Turno">
+                <input type="text" id="txtNombreTurno" name="txtNombreTurno" class="form-control form-control-sm" placeholder="Nombre del Turno" pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$">
             </div>
             <div class="form-group col-md-6">
                 <label for="txtHoraInicio">Hora de Inicio</label>

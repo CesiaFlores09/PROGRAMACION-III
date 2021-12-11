@@ -1,0 +1,117 @@
+<div class="card text-white bg-secondary mb-3" id="cardEnfermedad">
+    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS ENFERMEDADES
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardEnfermedad" aria-label="Close"></button></div>
+    <div class="card-body">
+        <form id="frmRegistrarEnfermedad" data-accion="nuevo" data-codigoenfermedad="0" class="row g-2">
+           
+            <div class="col-auto">
+                <label for="txtNombreEnfermedad" class="">Nombre</label>
+                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombreEnfermedad" placeholder="Fiebrre Común" required>
+            </div>
+            <div class="col-auto">
+                <label for="txtDescripcionEnfermedad" class="">Descripción</label>
+                <textarea class="form-control" id="txtDescripcionEnfermedad" placeholder="Descripción" required></textarea>
+            </div>
+            <div class="col-auto">
+                <label for="cboSintomasEnfermedad" class="">Sintomas</label>
+                <select name="" id="cboSintomasEnfermedad" class="form-control" required multiple>
+                    </select>
+            </div>
+            <div class="col-auto">
+                <button id="btnRegistrarEnfermedad" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Registrar</button>
+                <button type="reset" class="btn btn-warning mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: yellow;">Nuevo</button>
+                <button type="button" class="btn btn-success mb-3" id="btnBuscarEnfermedad" style="border-radius: 10px; margin-top: 14px; color: black; border-color: green;">Buscar</button>
+            </div>
+        </form>
+        <div class="row g-2">
+            <div class="col-auto" id="alerta">
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgEnfermedad">
+                    <strong></strong> <span></span>
+                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                       X
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+      function consultarSintomasEnfermedad(turnos) {
+        $.get("http://localhost:3008/consultar-sintoma", (respuesta, status) => {
+            console.log(respuesta);
+            let cboSintomasEnfermedad = $("#cboSintomasEnfermedad");
+            let html = "";
+            cboSintomasEnfermedad.empty();
+            cboSintomasEnfermedad.append("<option value=''>Seleccione los sintimas de trabajo</option>");
+            respuesta.resp.forEach(turno => {
+                cboSintomasEnfermedad.append(`<option value="${turno.idSintoma}">${turno.Nombre}--${turno.Detalles})</option>`);
+            });
+        }, "json");
+          
+      }
+      
+      function mostrarEnfermedad(enfermedad){
+        $("#frmRegistrarEnfermedad")
+            .data("accion","modificar")
+            .data("codigoenfermedad",enfermedad.idEnfermedad);
+        $("#txtNombreEnfermedad").val(enfermedad.Nombre);
+        $("#txtDescripcionEnfermedad").val(enfermedad.Detalles);
+        let sintomas = enfermedad.idsintomas.split(",");
+        $("#cboSintomasEnfermedad").val(sintomas);
+        }
+      
+        function limpiarDatosEnfermedad(enfermedad){
+            $("#frmRegistrarEnfermedad")
+                .data("accion","nuevo")
+                .data("codigoenfermedad",0);
+            $("#txtNombreEnfermedad").val("");
+            $("#txtDescripcionEnfermedad").val("");
+        }
+
+            $(document).ready(function(){
+                consultarSintomasEnfermedad();
+            $("#btnBuscarEnfermedad").click(function(ev){
+                ev.preventDefault();
+                abrir_ventana("enfermedades", "buscar");
+        });
+
+                $('#frmRegistrarEnfermedad').submit(e => {
+                    e.preventDefault();
+                    let accion = $("#frmRegistrarEnfermedad").data("accion"),
+                        id = $("#frmRegistrarEnfermedad").data("codigoenfermedad"),
+                        nombre = $('#txtNombreEnfermedad').val(),
+                        detalles = $('#txtDescripcionEnfermedad').val(),
+                        sintomas = $('#cboSintomasEnfermedad').val();
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'nombre': nombre,
+                            'detalles': detalles,
+                            'sintomas': sintomas
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/enfermedad', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            $('#alerta').append(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>¡Exito!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                                limpiarDatosEnfermedad();
+                                consultarEnfermedades();
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosEnfermedad();
+                });
+            });
+  </script>

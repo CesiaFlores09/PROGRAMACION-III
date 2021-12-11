@@ -1,0 +1,115 @@
+<div class="card text-white bg-secondary mb-3" id="cardBuscarExamen">
+    <div class="card-header">
+        Consulta de Examenes
+    
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" data-bs-target="#cardBuscarExamen" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <table id="tblBuscarExamen" class="table table-secondary table-hover table-sm">
+            <thead>
+                <tr>
+                    <th colspan="7">
+                        <input class="form-control" placeholder="Buscar examenes" type="text" 
+                            name="txtBuscarExamenes" id="txtBuscarExamenes">
+                    </th>
+                </tr>
+                <tr>
+                    <th>TIPO DE EXAMEN</th>
+                    <th>CITA</th>
+                    <th>FECHA REALIZACION</th>
+                    <th>FECHA RESULTADOS</th>
+                    <th>RESULTADOS</th>
+                    <th>ESTADO</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function consultarExamenes(){
+        $.get("http://localhost:3008/consultar-examen",(respuesta, status)=>{
+            $("#tblBuscarExamen > tbody > tr").remove();
+            console.log(respuesta);
+            let $tblBuscarExamen = $("#tblBuscarExamen > tbody"),
+                filas = '';
+            if(respuesta.resp.length>0){
+                respuesta.resp.forEach(examen => {
+                    let enfermedades = '';
+                    examen.nombreEnfermedades = examen.nombreEnfermedades.split(',')
+                    let estadoenfermedad = '';
+                    examen.estadoEnfermedad = examen.estadoEnfermedades.split(',')
+                    examen.nombreEnfermedades.forEach((enfermedad, index)=>{
+                        estadoenfermedad = examen.estadoEnfermedad[index]
+                        if (estadoenfermedad == '0') {
+                            estadoenfermedad = "Pendiente"
+                        } else if (estadoenfermedad == '1') {
+                            estadoenfermedad = "Negativo"
+                        } else {
+                            estadoenfermedad = "Positivo"
+                        }
+                        enfermedades += `<span class="badge badge-pill badge-info text-dark">${enfermedad}</span>`
+                    })
+                    if (examen.Estado == 1) {
+                        estado = '<span class="badge badge-success text-dark">Activo</span>';
+                    } else {
+                        estado = '<span class="badge badge-danger text-dark">Inactivo</span>';
+                    }
+                    filas += `
+                        <tr onclick='mostrarExamen(${JSON.stringify(examen)})'>
+                            <td>${examen.tipoExamen}</td>
+                            <td>[${examen.idCita}]${examen.Nombre}</td>
+                            <td>${examen.FechaRealizacion}</td>
+                            <td>${examen.FechaResultados}</td>
+                            <td>${enfermedades}</td>
+                            <td>${estadoenfermedad}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger" 
+                                    onclick='eliminarExamen(${JSON.stringify(examen)})'>
+                                    <i class="fas fa-trash-alt">Eliminar</i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }else{
+                filas = `<tr>
+                            <td colspan="4">No hay examenes registrados</td>
+                        </tr>`;
+            }
+            $tblBuscarExamen.append(filas);
+        }, "json");
+    }
+    function eliminarExamen(examen){
+        if( confirm(`Esta seguro de eliminar el examen ${examen.Nombre}?`) ){
+            let accion = "eliminar",
+                id = examen.idExamen,
+                datos = {accion,id};
+            $.post("http://localhost:3008/examen",JSON.stringify(datos),(resp, status)=>{
+                $("#msgUsuario").removeClass("d-none").text(resp.resp);
+
+                $("#msgUsuario")
+                    .removeClass("alert-danger")
+                    .addClass("alert-success");
+
+                setTimeout(()=>{
+                    $("#msgUsuario").addClass("d-none");
+                },5000);
+                limpiarDatosExamen();
+                consultarExamenes();
+            }, "json");
+        }
+    }
+    $(document).ready(e=>{
+        consultarExamenes();
+        $("#txtBuscarExamenes").keyup(function(e){
+            let valor = $(this).val(),
+                $tblexamenes = $("#tblBuscarExamen > tbody > tr");
+                $tblexamenes.show();
+            let $filas = $tblexamenes.filter(function(index){
+                return $(this).find("td:not(:last)").text().toLowerCase().indexOf(valor.toLowerCase())==-1;
+            });
+            $filas.hide();
+        });
+    });
+</script>

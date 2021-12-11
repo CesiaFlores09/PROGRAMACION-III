@@ -42,11 +42,25 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-modulo="citas" data-formulario="citas">Citas</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-modulo="examenes" data-formulario="examenes">Examenes</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Examenes
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                          <li><a class="dropdown-item" data-modulo="tipoexamen" data-formulario="tipoexamen" href="#">Tipo examen</a></li>
+                          <li><a class="dropdown-item" data-modulo="examenes" data-formulario="examenes" href="#">Registro de examenes</a></li>
+                          <li><a class="dropdown-item" data-modulo="examenes" data-formulario="buscar" href="#">Busqueda de examenes</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-modulo="tratamientos" data-formulario="tratamientos">Tratamientos</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Tratamientos
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                          <li><a class="dropdown-item" data-modulo="tipotratamiento" data-formulario="tipotratamiento" href="#">Tipo examen</a></li>
+                          <li><a class="dropdown-item" data-modulo="tratamientos" data-formulario="tratamientos" href="#">Registro de tratamientos</a></li>
+                          <li><a class="dropdown-item" data-modulo="tratamientos" data-formulario="buscar" href="#">Busqueda de tratamientos</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -68,6 +82,9 @@
                           <li><a class="dropdown-item" data-modulo="enfermedades" data-formulario="buscar" href="#">Busqueda de enfermedades</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-danger" href="#" id="cerrarSesion">Cerrar sesion</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -88,8 +105,12 @@
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="citas_buscar"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="examenes_examenes"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="examenes_buscar"></div>
+            <div class="col col-md-6 position-absolute alert-dismissible fade show" id="tipoexamen_tipoexamen"></div>
+            <div class="col col-md-6 position-absolute alert-dismissible fade show" id="tipoexamen_buscar"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="tratamientos_tratamientos"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="tratamientos_buscar"></div>
+            <div class="col col-md-6 position-absolute alert-dismissible fade show" id="tipotratamiento_tipotratamiento"></div>
+            <div class="col col-md-6 position-absolute alert-dismissible fade show" id="tipotratamiento_buscar"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="proveedores_proveedores"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="proveedores_buscar"></div>
             <div class="col col-md-6 position-absolute alert-dismissible fade show" id="medicamentos_medicamentos"></div>
