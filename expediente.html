@@ -11,6 +11,11 @@
     <!-- Contenedor principal -->
     <div class="container">
         <div class="row">
+            <div class="col-md-12">
+                <a href="#" class="btn btn-danger btn-lg btn-block" id="cerrarSesion">Cerrar sesión</a>
+            </div>
+        </div>
+        <div class="row">
             <div class="col col-md-6">
                 <h3 class="text-purple" style= "color: peru;">Facial Access</h3>
             </div>
@@ -31,54 +36,40 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="nombre">Nombre</label>
-                                                    <p class="form-control-static">Marvin Josue</p>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="apellido">Apellido</label>
-                                                    <p class="form-control-static">Gonzalez Vazques</p>
+                                                    <label for="nombre">Nombre Completo</label>
+                                                    <p class="form-control-static" id="nombre"></p>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="dui">DUI</label>
-                                                    <p class="form-control-static">12345678-9</p>
+                                                    <p class="form-control-static" id="dui"></p>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="nit">NIT</label>
-                                                    <p class="form-control-static">1111-120200-105-2</p>
+                                                    <p class="form-control-static" id="nit"></p>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="fecha_nacimiento">Fecha de nacimiento</label>
-                                                    <p class="form-control-static">12/12/2000</p>
+                                                    <p class="form-control-static" id="fecha_nacimiento"></p>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="telefono">Teléfono</label>
-                                                    <p class="form-control-static">1234-5678</p>
+                                                    <p class="form-control-static" id="telefono"></p>
                                                     
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="direccion">Dirección</label>
-                                                    <p class="form-control-static">Calle 1 #1-1</p>
+                                                    <p class="form-control-static" id="direccion"></p>
                                                    
                                                 </div><div class="form-group">
                                                     <label for="direccion">Correo electronico</label>
-                                                    <p class="form-control-static" >
-                                                        marvin@gmail.com
-                                                    </p>
+                                                    <p class="form-control-static" id="correo"></p>
                                                    
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label>Observaciones</label>
-                                                    <p class="form-control-static">
-                                                        Debe guardar reposo hasta que se encuentre mejor <br>
-                                                        Debe manmtenerse en contacto con el médico<br>
-                                                        Debe estar bajo vigilancia
-                                                    </p>
-                                                </div>
-                                                <div class="form-group">
                                                     <label for="fecha_ingreso">Fotografia</label>
-                                                    <img src="icon/perfil.png" alt="Fotografia" class="img-responsive" style="width: 200px; height: 200px; display: block;">
+                                                    <img src="icon/perfil.png" alt="Fotografia" class="img-responsive" style="width: 200px; height: 200px; display: block;" id="fotografia">
                                             </div>
                                         </div>
                                     </div>
@@ -95,30 +86,23 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div class="form-group">
+                                                <div class="form-group" style="height: 200px; overflow-y: auto; border-radius: 5px; border: solid gray 1px; padding: 2px; margin: 2px; background-color: gray;">
                                                     <label for="historial_enfermedades">Historial de enfermedades</label>
-                                                    <p class="form-control-static">
-                                                        Diabetes, hipertensión, asma, bronquitis, etc.
+                                                    <p class="form-control-static" id="historial_enfermedades">
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
+                                                <div class="form-group" style="height: 200px; overflow-y: auto; border-radius: 5px; border: solid gray 1px; padding: 2px; margin: 2px; background-color: gray;">
+                                                    <label for="historial_examenes">Historial de examenes</label>
+                                                    <p class="form-control-static" id="historial_examenes">
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12" style="height: 200px; overflow-y: auto; border-radius: 5px; border: solid gray 1px; padding: 2px; margin: 2px; background-color: gray;">
                                                 <div class="form-group">
                                                     <label for="historial_tratamientos">Historial de tratamientos</label>
-                                                    <p class="form-control-static">
-                                                        Tratamiento 1<br>
-                                                        Tratamiento 2<br>
-                                                        Tratamiento 3
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label for="historial_medicamentos">Historial de medicamentos</label>
-                                                    <p class="form-control-static">
-                                                        Medicamento 1 <span class="badge badge-primary">1</span><br>
-                                                        Medicamento 2 <span class="badge badge-primary">1</span><br>
-                                                        Medicamento 3
+                                                    <p class="form-control-static" id="historial_tratamientos">
                                                     </p>
                                                 </div>
                                         </div>
@@ -140,5 +124,77 @@
         
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script>
+        function acceder() {
+            $.get('http://localhost:3008/permitir-entrada-paciente', function(data) {
+                if (data.resp == true) {
+                        console.log("acceso permitido");
+                    } else {
+                        window.location.href = "index.html";
+                    }
+            }, 'json');
+        }
+
+        function consultarPaciente() {
+            $.get('http://localhost:3008/consultar-a-paciente', function(data) {
+                datausuario=data.resp;
+                console.log(datausuario);
+                usuario = datausuario[0][0];
+                consultas = datausuario[1];
+                examenes = datausuario[2];
+                tratamientos = datausuario[3];
+                console.log(tratamientos);
+                $('#nombre').html(usuario.Nombre);
+                $('#fecha_nacimiento').html(usuario.FechaNacimiento);
+                $('#telefono').html(usuario.Telefono);
+                $('#direccion').html(usuario.Direccion);
+                $('#correo').html(usuario.Correo);
+                $('#dui').html(usuario.DUI);
+                $('#nit').html(usuario.NIT);
+                $('#fotografia').attr('src', usuario.Foto);
+
+                for (var i = 0; i < consultas.length; i++) {
+                    $('#historial_enfermedades').append('<b class="form-control-static">Consulta el '+consultas[i].FechaCita+ ' Con el Doctor ' +consultas[i].personal + ', Sintomas:'+consultas[i].sintomas+'</b><br></br>');
+                }
+                for (var i = 0; i < examenes.length; i++) {
+                    if (examenes[i].Estado == '0') {
+                        examenes[i].Estado = 'Pendiente';
+                    } else if (examenes[i].Estado == '1') {
+                        examenes[i].Estado = 'Negativo';
+                    } else{
+                        examenes[i].Estado = 'Positivo';
+                    }
+                    $('#historial_examenes').append('<b class="form-control-static">'+examenes[i].tipoExamen+ ', Estado ' +examenes[i].Estado+'</b><br></br>');
+                }
+                for (var i = 0; i < tratamientos.length; i++) {
+                    $('#historial_tratamientos').append('<b class="form-control-static">Tratamiento el '+tratamientos[i].nombreTratamiento+'</b><br></br>');
+                }
+               
+            }, 'json');
+        }
+            
+        $(document).ready(function(){
+            acceder();
+            consultarPaciente();
+
+            $('#cerrarSesion').click(function(){
+                console.log("cerrando sesion");
+                $.post('http://localhost:3008/cerrar_sesion', JSON.stringify({}), function(data) {
+                    if (data.resultado == true) {
+                            window.location.href = "index.html";
+                        } else {
+                            console.log("Algo falló al cerrar la sesion");
+                        }
+                }, 'json');
+            });
+        });
+    </script>
 </body>
 </html>

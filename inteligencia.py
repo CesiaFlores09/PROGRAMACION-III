@@ -12,7 +12,7 @@ class manejarRostros():
         else:
             print('No se encontro la ruta')
             return False
-        
+        print(img_ruta)
         cv2.imwrite(img_ruta, img)
 
         detector = self.detectar_rostros(img_ruta, ruta+'rostros/rostro', id)
@@ -95,7 +95,7 @@ class manejarRostros():
             img2 = plt.imread(f'{ruta}temp/temp{id}.jpg')
             similitud = self.similitud_rostros(img1, img2)
             print('Similitud:', similitud)
-            if similitud > 0.9:
+            if similitud > 0.98:
                 print('Bienvenido')
                 return True
             else:
@@ -118,7 +118,7 @@ class manejarRostros():
         plt.imshow(cv2.drawMatches(img1, kp1, img2, kp2, matches, None))
         plt.show()
 
-        similitud = [i for i in matches if i.distance < 75]
+        similitud = [i for i in matches if i.distance < 80]
         if len(similitud) == 0:
             return 0
         return len(similitud) / len(matches)

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+    <body background="https://aiglobaldevelopers.com/images/user/login.png">
+        <div class="container">
+            <div class="row">
+                <div class="col col-md-6">
+                    <h3 class="text-purple" style= "color: peru;">Facial Access</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-md-4"></div>
+                <div class="col col-md-4">
+                    <div class="card text-white bg-secondary" id="card-token">
+                        <div class="card-body">
+                            <form id="frmToken">
+                                <div class="form-group">
+                                    <label for="token">Token</label>
+                                    <input type="text" class="form-control" id="token" name="token" placeholder="Token">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Ingresar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card text-white bg-secondary mb-3" id="card-main">
+                        <div class="card-header" style="text-align: center;">INICIAR SESION</div>
+                        <div class="card-body">
+                            <form id="frmLogin" class="row g-2">
+                                <div class="col-auto">
+                                    <label for="txtDui" class="">DUI</label>
+                                    <input pattern="[0-9]{8}-[0-9]{1}" type="text" class="form-control" id="txtDui" placeholder="DUI" required>
+                                </div>
+                                <div class="col-auto">
+                                    <video src="" id="fotoUsuario" width="200" height="200"></video>
+                                    <canvas id="previsualizarFoto"></canvas>
+                                </div>
+                                <div class="col-auto">
+                                    <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
+                                    <button id="btnCapturarRostroLogin" disabled type="submit" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Iniciar Sesion</button>
+                              </div>
+                              <p class="" id="alerta">Alerta</p>
+                            </div>
+            
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-4"></div>
+            </div>
+    
+        </div>
+    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+            </script>
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
+                integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+            <script type="module">
+                import { isDUI } from './validarNitDui.js'
+                function iniciarVideo() {
+                    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+                    if (navigator.getUserMedia) {
+                        navigator.getUserMedia({
+                            video: true
+                        }, function (stream) {
+                            var video = $('#fotoUsuario')[0];
+                            video.srcObject = stream;
+                            video.play();
+                        }, function (error) {
+                            console.log("Error al acceder a la camara");
+                        });
+                    } else {
+                        console.log("Su navegador no soporta la camara");
+                    }
+                }
+                function capturarRostro() {
+                    let video = $('#fotoUsuario')[0],
+                        canvas = $('#previsualizarFoto')[0],
+                        context = canvas.getContext('2d'),
+                        width = video.width,
+                        height = video.height;
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(video, 0, 0, width, height);
+                }
+                $(document).ready(function(){
+                    iniciarVideo();
+                    let hayfoto = false,
+                        haydui = false;
+
+                    $('#card-main').hide();
+                    let stop = false;
+                    let times = 0;
+                    
+                    var ocultarmain = setInterval(function(){
+                        if(stop == true) 
+                        {
+                            clearInterval(ocultarmain);
+                        }
+                    }, 1000);
+
+                    $('#frmToken').submit(function(e){
+                        e.preventDefault();
+                        let token = $('#token').val(),
+                            data = {
+                                token: token
+                            }
+                        $.post('http://localhost:3008/dev', JSON.stringify(data), function(response){
+                            console.log(response);
+                            if(response.resultado == true){
+                                stop = true;
+                                $('#card-token').hide();
+                                $('#card-main').show();
+                            } else {
+                                alert('Token incorrecto');
+                                if(times >= 5){
+                                    window.location.href = 'index.html';
+                                } else {
+                                    times++;
+                                }
+                            }
+                        }, 'json');
+                    });
+
+                    $("#txtDui").keyup(function(){
+                        let DUI = $('#txtDui').val();
+                        if(isDUI(DUI)){
+                            $('#alerta').text('');
+                            $('#txtDui').css('border-color', 'green');
+                            haydui = true;
+                        }else{
+                            $('#alerta').text('DUI invalido');
+                            $('#txtDui').css('border-color', 'red');
+                            haydui = false;
+                        }
+                        console.log(haydui && hayfoto);
+                        $('#btnCapturarRostroLogin').attr('disabled', !(hayfoto && haydui));
+                        if (hayfoto && haydui){
+                            $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                            $('#btnCapturarRostroLogin').css('border-color', 'green');
+                        }else{
+                            $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                            $('#btnCapturarRostroLogin').css('border-color', 'red');
+                        }
+                    });
+
+                    $('#btnCapturarRostroRegistrar').on('click', function(){
+                        capturarRostro();
+                        $('#btnCapturarRostroLogin').prop('disabled', false);
+                        $('#btnCapturarRostroLogin').css('border-color', 'green');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                        hayfoto = true;
+                        if(hayfoto && haydui){
+                            $('#btnCapturarRostroLogin').css('border-color', 'green');
+                            $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                        } else {
+                            $('#btnCapturarRostroLogin').css('border-color', 'red');
+                            $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        }
+                        console.log(haydui && hayfoto);
+                        $('#btnCapturarRostroLogin').prop('disabled', !(hayfoto && haydui));
+                    });
+
+                    $('#frmLogin').on('submit', function(e){
+                        e.preventDefault();
+                        let canvas = $('#previsualizarFoto')[0];
+                        let context = canvas.getContext('2d');
+                        let foto = [];
+                        for(let i=0; i<200; i++){
+                            for(let j=0; j< 200; j++){
+                                let imgdata = context.getImageData(j,i,1,1).data,
+                                    valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
+                                foto.push(valores);
+                            }
+                        }
+                        foto = foto.join(',');
+                        let dui = $('#txtDui').val(),
+                        data = {
+                            dui: dui,
+                            imagen: foto
+                        };
+                        console.log(data);
+                        $.post('http://localhost:3008/iniciar_sesion_personal', JSON.stringify(data), (resp) => {
+                            if (resp.resultado == true) {
+                                window.location.href = 'http://localhost:3008/administrar.html';
+                            } else {
+                                alert('Usuario no encontrado');
+                            }
+                        }, 'json');
+                    });
+                });
+            </script>
+</body>
+</html>

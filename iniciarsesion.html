@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-auto">
                                 <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
-                                <button id="btnCapturarRostroLogin" type="submit" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
+                                <button id="btnCapturarRostroLogin" disabled type="submit" class="btn btn-success" style="border-radius: 10px; color: black; border-color: red;">Iniciar Sesion</button>
                                 <a href="registrarse.html" class="btn btn-warning" style="border-radius: 10px; color: black; border-color: white;">Aun no tienes cuenta</a>
                           </div>
                           <p class="" id="alerta">Alerta</p>
@@ -54,7 +54,8 @@
         </script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
             integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-        <script>
+        <script type="module">
+            import { isDUI } from './validarNitDui.js'
             function iniciarVideo() {
                 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
                 if (navigator.getUserMedia) {
@@ -83,12 +84,46 @@
             }
             $(document).ready(function(){
                 iniciarVideo();
+                let hayfoto = false,
+                    haydui = false;
 
                 $('#btnCapturarRostroRegistrar').on('click', function(){
                     capturarRostro();
-                    $('#btnRegistrar').prop('disabled', false);
-                    $('#btnRegistrar').css('border-color', 'green');
+                    $('#btnCapturarRostroLogin').prop('disabled', false);
+                    $('#btnCapturarRostroLogin').css('border-color', 'green');
                     $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                    hayfoto = true;
+                    if(hayfoto && haydui){
+                        $('#btnCapturarRostroLogin').css('border-color', 'green');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                    } else {
+                        $('#btnCapturarRostroLogin').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                    }
+                    console.log(haydui && hayfoto);
+                    $('#btnCapturarRostroLogin').prop('disabled', !(hayfoto && haydui));
+                });
+
+                $("#txtDui").keyup(function(){
+                    let DUI = $('#txtDui').val();
+                    if(isDUI(DUI)){
+                        $('#alerta').text('');
+                        $('#txtDui').css('border-color', 'green');
+                        haydui = true;
+                    }else{
+                        $('#alerta').text('DUI invalido');
+                        $('#txtDui').css('border-color', 'red');
+                        haydui = false;
+                    }
+                    console.log(haydui && hayfoto);
+                    $('#btnCapturarRostroLogin').attr('disabled', !(hayfoto && haydui));
+                    if (hayfoto && haydui){
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                        $('#btnCapturarRostroLogin').css('border-color', 'green');
+                    }else{
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroLogin').css('border-color', 'red');
+                    }
                 });
 
                 $('#frmLogin').on('submit', function(e){
@@ -96,19 +131,19 @@
                     let canvas = $('#previsualizarFoto')[0];
                     let context = canvas.getContext('2d');
                     let foto = [];
-                    for(i=0; i<200; i++){
-                        for(j=0; j< 200; j++){
+                    for(let i=0; i<200; i++){
+                        for(let j=0; j< 200; j++){
                             let imgdata = context.getImageData(j,i,1,1).data,
                                 valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
                             foto.push(valores);
                         }
                     }
                     foto = foto.join(',');
-                    let dui = $('#txtDui').val();
-                    data = {
-                        dui: dui,
-                        imagen: foto
-                    };
+                    let dui = $('#txtDui').val(),
+                        data = {
+                            dui: dui,
+                            imagen: foto
+                        };
                     console.log(data);
                     $.post('http://localhost:3008/iniciar_sesion', JSON.stringify(data), (resp) => {
                         if (resp.resultado == true) {

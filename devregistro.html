@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro administrador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col col-md-6">
+                <h3 class="text-purple" style= "color: peru;">Facial Access</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-md-3"></div>
+            <div class="col col-md-6">
+                <div class="card text-white bg-secondary" id="card-token">
+                    <div class="card-body">
+                        <form id="frmToken">
+                            <div class="form-group">
+                                <label for="token">Token</label>
+                                <input type="text" class="form-control" id="token" name="token" placeholder="Token">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card text-white bg-secondary mb-3" id="card-main">
+                    <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES</div>
+                    <div class="card-body">
+                        <form id="frmRegistrarPersonal" data-accion="nuevo-login" data-codigopersonal="0" class="row g-2">
+           
+                            <div class="col-auto">
+                                <label for="txtDuiPersonal" class="">DUI</label>
+                                <input pattern="[0-9]{8}-[0-9]{1}" type="text" class="form-control" id="txtDuiPersonal" placeholder="DUI" required>
+                            </div>
+                            <div class="col-auto" >
+                                <label for="txtNitPersonal" class="">NIT</label>
+                                <input pattern="[0-9]{4}-[0-9]{6}-[0-9]{3}-[0-9]{1}" type="text" class="form-control" id="txtNitPersonal" placeholder="NIT" required>
+                            </div>
+                            <div class="col-auto">
+                                <label for="txtNombrePersonal" class="">Nombre Completo</label>
+                                <input pattern="(^[A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+(([\s][A-ZÁÉÍÓÚÑ]{1}[a-záéíóúñ]{1,20})+)*$" type="text" class="form-control" id="txtNombrePersonal" placeholder="Marvin Josue Solorzano Cruz" required>
+                            </div>
+                            <div class="col-auto">
+                                <label for="txtSexoPersonal" class="">Sexo</label>
+                                <select name="" id="txtSexoPersonal" class="form-control" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                </select>
+                               </div>
+                            <div class="col-auto">
+                                <label for="txtTelefonoPersonal" class="">Telefono</label>
+                                <input pattern="[0-9]{4}[-| ][0-9]{4}" required type="tel" class="form-control" id="txtTelefonoPersonal" placeholder="Telefono">
+                            </div>
+                            <div class="col-auto">
+                                <label for="txtEmailPersonal" class="">Email</label>
+                                <input pattern="^[^@]+@[^@]+\.[a-zA-Z]{2,}$" required type="email" class="form-control" id="txtEmailPersonal" placeholder="Email">
+                            </div>
+                            <div class="col-auto">
+                                <label for="txtDireccionPersonal" class="">Dirección</label>
+                                <input type="text" class="form-control" id="txtDireccionPersonal" placeholder="Dirección" required>
+                            </div>
+                            <div class="col-auto">
+                                <label for="txtFechaNacimientoPersonal" class="">Fecha Nacimiento</label>
+                                <input required type="date" class="form-control" id="txtFechaNacimientoPersonal" >
+                            </div>
+                            <div class="col-auto">
+                                <label for="cboEspecialidad" class="">Especialidad</label>
+                                <select name="" id="cboEspecialidadPersonal" class="form-control" required>
+                                    </select>
+                
+                            </div>
+                            <div class="col-auto">
+                                <label for="txtTurno" class="">Turno</label>
+                                <select name="" id="cboTurnoPersonal" class="form-control" required multiple>
+                                    </select>
+                            </div>
+                            <div class="col-auto">
+                                <video src="" id="fotoPersonal" width="200" height="200"></video>
+                            </div>
+                            <div class="col-auto">
+                                <canvas id="previsualizarFotoPersonal" hidden></canvas>
+                                <img src="" alt="" id="imgPrevisualizarFotoPersonal">
+                            </div>
+                            <div class="col-auto">
+                                <button id="btnCapturarRostroRegistrar" type="button" class="btn btn-success mb-3" style="border-radius: 10px; color: black; border-color: red;">Capturar rostro</button>
+                                <button id="btnRegistrar" type="submit" class="btn btn-success mb-3" style="border-radius: 10px; margin-top: 14px; color: black; border-color: red;" disabled>Registrar</button>
+                            </div>
+                        </form>
+                        <div class="row g-2">
+                            <div class="col-auto" id="alerta">
+                                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="msgPersonal">
+                                    <strong></strong> <span></span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                       X
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+            <div class="col col-md-3"></div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+        </script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+        <script type="module">
+            import { isDUI, isNIT } from './validarNitDui.js';
+           function consultarTurnos(turnos) {
+        $.get("http://localhost:3008/consultar-turno", (respuesta, status) => {
+            console.log(respuesta);
+            let cboTurno = $("#cboTurnoPersonal");
+            let html = "";
+            cboTurno.empty();
+            cboTurno.append("<option value=''>Seleccione los turnos de trabajo</option>");
+            respuesta.resp.forEach(turno => {
+                cboTurno.append(`<option value="${turno.idTurno}">${turno.HoraInicio}(${turno.DiaInicio})-${turno.HoraSalida}(${turno.DiaSalida})</option>`);
+            });
+        }, "json");
+          
+      }
+      function consultarEspecialidad(params) {
+        $.get("http://localhost:3008/consultar-especialidad", (respuesta, status) => {
+            console.log(respuesta);
+            let cboEspecialidad = $("#cboEspecialidadPersonal");
+            let html = "";
+            cboEspecialidad.empty();
+            respuesta.resp.forEach(especialidad => {
+                cboEspecialidad.append(`<option value="${especialidad.idEspecialidad}">${especialidad.Nombre}</option>`);
+            });
+        }, "json");
+      }
+      function iniciarVideo() {
+                navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+                if (navigator.getUserMedia) {
+                    navigator.getUserMedia({
+                        video: true
+                    }, function (stream) {
+                        var video = $('#fotoPersonal')[0];
+                        video.srcObject = stream;
+                        video.play();
+                    }, function (error) {
+                        console.log("Error al acceder a la camara");
+                    });
+                } else {
+                    console.log("Su navegador no soporta la camara");
+                }
+            }
+            function capturarRostro() {
+                let video = $('#fotoPersonal')[0],
+                    canvas = $('#previsualizarFotoPersonal')[0],
+                    context = canvas.getContext('2d'),
+                    width = video.width,
+                    height = video.height;
+                canvas.width = width;
+                canvas.height = height;
+                context.drawImage(video, 0, 0, width, height);
+
+                let data = canvas.toDataURL('image/png');
+                $("#imgPrevisualizarFotoPersonal").attr("src",data);
+            }
+            $(document).ready(function(){
+                iniciarVideo();
+                consultarTurnos();
+                consultarEspecialidad();
+                let hayfoto = false,
+                    hayDui = false,
+                    hayNit = false;
+                $("#txtDuiPersonal").on("keyup", function(){
+                    if(isDUI($(this).val())){
+                        $("#txtDuiPersonal").css("border-color", "green");
+                        $('#btnRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        hayDui = true;
+                    }else{
+                        $("#txtDuiPersonal").css("border-color", "red");
+                        $('#btnRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        hayDui = false;
+                    }
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
+
+                $("#txtNitPersonal").on("keyup", function(){
+                    console.log(isNIT($(this).val()));
+                    if(isNIT($("#txtNitPersonal").val())){
+                        $("#txtNitPersonal").css("border-color", "green");
+                        $("#btnRegistrar").css('border-color', 'red');
+                        $("#btnCapturarRostroRegistrar").css('border-color', 'red');
+                        hayNit = true;
+                    }else{
+                        $("#txtNitPersonal").css("border-color", "red");
+                        $("#btnRegistrar").css('border-color', 'red');
+                        $("#btnCapturarRostroRegistrar").css('border-color', 'red');
+                        hayNit = false;
+                    }
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
+
+                $('#card-main').hide();
+                    let stop = false;
+                    let times = 0;
+                    
+                var ocultarmain = setInterval(function(){
+                    if(stop == true) 
+                    {
+                        clearInterval(ocultarmain);
+                    }
+                }, 1000);
+
+                $('#frmToken').submit(function(e){
+                    e.preventDefault();
+                    let token = $('#token').val(),
+                        data = {
+                            token: token
+                        };
+                    $.post('http://localhost:3008/dev', JSON.stringify(data), function(response){
+                        console.log(response);
+                        if(response.resultado == true){
+                            stop = true;
+                            $('#card-token').hide();
+                            $('#card-main').show();
+                        } else {
+                            alert('Token incorrecto');
+                            if(times >= 5){
+                                window.location.href = 'index.html';
+                            } else {
+                                times++;
+                            }
+                        }
+                    }, 'json');
+                });
+
+                $('#btnCapturarRostroRegistrar').on('click', function(){
+                    capturarRostro();
+                    $('#btnRegistrar').css('border-color', 'green');
+                    $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                    hayfoto = true;
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
+                $('#frmRegistrarPersonal').submit(e => {
+                    e.preventDefault();
+                    let canvas = $('#previsualizarFotoPersonal')[0],
+                        context = canvas.getContext('2d');
+                    let foto = [];
+                    for(let i=0; i<200; i++){
+                        for(let j=0; j< 200; j++){
+                            let imgdata = context.getImageData(j,i,1,1).data,
+                            valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
+                            foto.push(valores);
+                        }
+                    }
+                    foto = foto.join(',');
+                    let accion = $("#frmRegistrarPersonal").data("accion"),
+                        id = $("#frmRegistrarPersonal").data("codigopersonal"),
+                        dui = $('#txtDuiPersonal').val(),
+                        nit = $('#txtNitPersonal').val(),
+                        nombre = $('#txtNombrePersonal').val(),
+                        sexo = $('#txtSexoPersonal').val(),
+                        telefono = $('#txtTelefonoPersonal').val(),
+                        email = $('#txtEmailPersonal').val(),
+                        direccion = $('#txtDireccionPersonal').val(),
+                        turnos = $('#cboTurnoPersonal').val(),
+                        especialidad = $('#cboEspecialidadPersonal').val(),
+                        fechaNacimiento = $('#txtFechaNacimientoPersonal').val(),
+                        data = {
+                            'accion': accion,
+                            'id': id,
+                            'dui': dui,
+                            'nit': nit,
+                            'nombre': nombre,
+                            'sexo': sexo,
+                            'telefono': telefono,
+                            'correo': email,
+                            'direccion': direccion,
+                            'turnos': turnos,
+                            'idEspecialidad': especialidad,
+                            'fechaNacimiento': fechaNacimiento,
+                            'foto': foto
+                        };
+                    console.log(data);
+                    $.post('http://localhost:3008/personal', JSON.stringify(data), (respuesta, status) => {
+                        if ( respuesta.resultado.indexOf("exito") >=0 ) {
+                            window.location.href = 'administrar.html';
+                        } else {
+                            $('#alerta').append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>¡Error!</strong> <span>${respuesta.resultado}</span>
+                                    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">X</span>
+                                    </button>
+                                </div>`);
+                        }
+                    }, "json");
+                })
+                .on('reset', function(){
+                    limpiarDatosPersonal();
+                });
+            });   
+        </script>
+</body>
+</html>
