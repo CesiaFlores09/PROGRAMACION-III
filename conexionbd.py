@@ -3,7 +3,7 @@ import mysql.connector
 class conectar:
     def __init__(self):
         self.conexion = mysql.connector.connect(host="localhost", user="root",
-                                            passwd="admin123", database="clinica")
+                                            passwd="flores", database="clinica")
 
         if self.conexion.is_connected():
             print("Conectado")
