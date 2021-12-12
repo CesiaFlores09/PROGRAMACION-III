@@ -1,7 +1,9 @@
+from types import CellType
 from urllib import parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import json
-import cv2
+import random
+import string
 import numpy as np
 
 import crudpaciente
@@ -11,6 +13,13 @@ import crudturnos
 import crudespecialidades
 import crudpersonal
 import crudrecetas
+import crudsintoma
+import crudenfermedades
+import crudcitas
+import crudtipoexamen
+import crudtipotratamiento
+import crudexamenes
+import crudtratamientos
 import inteligencia
 
 crudproveedor = crudproveedor.curdproveedor()
@@ -20,43 +29,46 @@ crudturnos = crudturnos.curdturno()
 crudespecialidades = crudespecialidades.curdespecialidad()
 crudpersonal = crudpersonal.curdpersonal()
 crudrecetas = crudrecetas.curdreceta()
+crudsintoma = crudsintoma.curdsintoma()
+crudenfermedades = crudenfermedades.curdenfermedad()
+crudcitas = crudcitas.curdcitas()
+crudtipoexamen = crudtipoexamen.curdtipo_examen()
+crudtipotratamiento = crudtipotratamiento.curdtipo_tratamiento()
+crudexamenes = crudexamenes.curdexamen()
+crudtratamientos = crudtratamientos.curdtratamiento()
 inteligencia = inteligencia.manejarRostros()
 
+paciente = {'id':None, 'dui': None, 'nombre':None}
+personal = {'id':None, 'dui': None, 'nombre':None}
+token = '----------'
+
 class crud:
-    def administrar_paciente(self, datos):
-        id = 0
-        if datos['accion'] == 'nuevo':
-            sql = 'INSERT INTO pacientes (idPaciente, DUI, NIT, Nombre, Sexo, Telefono, Correo, Direccion, FechaNacimiento, Foto) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-            id = self.auto_increment('pacientes')
-            valores = (id, datos['dui'], datos['nit'], datos['nombre'], datos['sexo'], datos['telefono'], datos['correo'], datos['direccion'], datos['fechaNacimiento'], 'icon/pacientes/perfil'+str(id)+'.jpg')
-            resultado = self.ejecutar_sql(sql, valores)
-            if resultado == True:
-                mensaje = 'Paciente registrado exitosamente'
-            else:
-                mensaje = 'Error al registrar paciente'
-        elif datos['accion'] == 'editar':
-            sql = 'UPDATE pacientes SET DUI = %s, NIT = %s, Nombre = %s, Sexo = %s, Telefono = %s, Correo = %s, Direccion = %s, FechaNacimiento = %s WHERE idPaciente = %s'
-            valores = (datos['dui'], datos['nit'], datos['nombre'], datos['sexo'], datos['telefono'], datos['correo'], datos['direccion'], datos['fechaNacimiento'], datos['id'])
-            resultado = self.ejecutar_sql(sql, valores)
-            if resultado == True:
-                mensaje = 'Paciente editado exitosamente'
-            else:
-                mensaje = 'Error al editar paciente'
-
-        datos = {'respuesta': resultado, 'mensaje': mensaje, 'id': id}
-        return datos
-
     def permitir_entrada(self, usuario):
         return True
 
 class servidorBasico(SimpleHTTPRequestHandler):
     def do_GET(self):
+        global paciente
+        global personal
+        global token
+
         if self.path == '/':
             self.path = '/index.html'
             return SimpleHTTPRequestHandler.do_GET(self)
 
+        elif self.path == '/devindex.html' or self.path == '/devregistro.html':
+            token = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
+            print(token)
+            return SimpleHTTPRequestHandler.do_GET(self)
+
         elif self.path == '/consultar-paciente':
             resp = crudpaciente.consultar_paciente()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-a-paciente':
+            resp = crudpaciente.consultar_a_paciente(paciente['id'])
             self.send_response(200)
             self.end_headers()
             self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
@@ -99,11 +111,84 @@ class servidorBasico(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-sintoma':
+            resp = crudsintoma.consultar_sintoma()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-enfermedad':
+            resp = crudenfermedades.consultar_enfermedad()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-cita':
+            resp = crudcitas.consultar_citas()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-tipo-examen':
+            resp = crudtipoexamen.consultar_tipo_examen()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-tipo-tratamiento':
+            resp = crudtipotratamiento.consultar_tipo_tratamiento()
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-examen':
+            resp = crudexamenes.consultar_examen()
+            for fecha in resp:
+                fecha['FechaRealizacion'] = str(fecha['FechaRealizacion'])
+                fecha['FechaResultados'] = str(fecha['FechaResultados'])
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/consultar-tratamiento':
+            resp = crudtratamientos.consultar_tratamiento()
+            for fecha in resp:
+                fecha['FechaIniciar'] = str(fecha['FechaIniciar'])
+                fecha['FechaFinalizar'] = str(fecha['FechaFinalizar'])
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/permitir-entrada-paciente':
+            print(paciente)
+            print('SE CONSULTO POR PACIENTE')
+            if paciente['id'] is None:
+                resp = False
+            else:
+                resp = True
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
+
+        elif self.path == '/permitir-entrada-personal':
+            print(personal)
+            print('SE CONSULTO POR PERSOL')
+            if personal['id'] is None:
+                resp = False
+            else:
+                resp = True
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(dict(resp=resp)).encode('utf-8'))
             
         else:
             return SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
+        global paciente
+        global personal
+        global token
         content_length = int(self.headers['Content-Length'])
         data = self.rfile.read(content_length)
         data = data.decode('utf-8')
@@ -111,6 +196,10 @@ class servidorBasico(SimpleHTTPRequestHandler):
         data = json.loads(data)
 
         if self.path == '/paciente':
+            crear_y_login = False
+            if data['accion'] == 'nuevo-login':
+                crear_y_login = True
+                data['accion'] = 'nuevo'
             resultado = crudpaciente.administrar_paciente(data)
             print(resultado)
             if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
@@ -123,13 +212,22 @@ class servidorBasico(SimpleHTTPRequestHandler):
                 else:
                     id = data['id']
 
+                if crear_y_login:
+                    paciente['dui'] = data['dui']
+                    paciente['id'] = resultado[1]
+                    paciente['nombre'] = data['nombre']
+
                 inteligencia.guardar_rostro('icon/pacientes/', matriz, id)
 
         if self.path == '/personal':
+            crear_y_login = False
+            if data['accion'] == 'nuevo-login':
+                crear_y_login = True
+                data['accion'] = 'nuevo'
             resultado = crudpersonal.administrar_personal(data)
             print(resultado)
             if data['accion'] == 'nuevo' or data['accion'] == 'modificar' and resultado == 'Registro procesado con exito':
-                matriz = data['foto']
+                foto = data['foto']
                 matriz = np.array([np.fromstring(foto, np.uint8, sep=',')])
                 matriz = matriz.reshape(200, 200, 3)
                 if data['accion'] == 'nuevo':
@@ -138,13 +236,17 @@ class servidorBasico(SimpleHTTPRequestHandler):
                 else:
                     id = data['id']
 
-                inteligencia.guardar_rostro('icon/pacientes/', matriz, id)
+                if crear_y_login:
+                    personal['dui'] = data['dui']
+                    personal['id'] = resultado[1]
+                    personal['nombre'] = data['nombre']
+
+                inteligencia.guardar_rostro('icon/personal/', matriz, id)
 
         elif self.path == '/iniciar_sesion':
             resultado = crudpaciente.identificar(data['dui'])
-            print(resultado)
-            id = int(resultado[0]['idPaciente'])
             if resultado != False:
+                id = int(resultado[0]['idPaciente'])
                 foto = data['imagen']
                 matriz = np.array([])
                 matriz = np.fromstring(foto, np.uint8, sep=',')
@@ -153,11 +255,51 @@ class servidorBasico(SimpleHTTPRequestHandler):
                 comparar = inteligencia.iniciar_sesion('icon/pacientes/', matriz, id)
 
                 if comparar == True:
+                    paciente['dui'] = resultado[0]['DUI']
+                    paciente['id'] = resultado[0]['idPaciente']
+                    paciente['nombre'] = resultado[0]['Nombre']
                     resultado = True
                 else:
                     resultado = False
             else:
                 resultado = False
+
+        elif self.path == '/iniciar_sesion_personal':
+            resultado = crudpersonal.identificar(data['dui'])
+            print(resultado)
+            if resultado != False:
+                id = int(resultado[0]['idPersonal'])
+                foto = data['imagen']
+                matriz = np.array([])
+                matriz = np.fromstring(foto, np.uint8, sep=',')
+                matriz = matriz.reshape(200, 200, 3)
+
+                comparar = inteligencia.iniciar_sesion('icon/personal/', matriz, id)
+
+                if comparar == True:
+                    print(personal)
+                    personal['dui'] = resultado[0]['DUI']
+                    personal['id'] = resultado[0]['idPersonal']
+                    personal['nombre'] = resultado[0]['Nombre']
+                    resultado = True
+                else:
+                    resultado = False
+            else:
+                resultado = False
+
+        elif self.path == '/cerrar_sesion':
+            print('CERRANDO SESION')
+            paciente['id'] = None
+            paciente['dui'] = None
+            paciente['nombre'] = None
+            resultado = True
+
+        elif self.path == '/cerrar_sesion_personal':
+            print('CERRANDO SESION')
+            personal['id'] = None
+            personal['dui'] = None
+            personal['nombre'] = None
+            resultado = True
 
         elif self.path == '/proveedor':
             resultado = crudproveedor.administrar_proveedor(data)
@@ -176,7 +318,40 @@ class servidorBasico(SimpleHTTPRequestHandler):
 
         elif self.path == '/admintir':
             resultado = crud.permitir_entrada(data)
-            
+
+        elif self.path == '/sintoma':
+            resultado = crudsintoma.administrar_sintoma(data)
+
+        elif self.path == '/enfermedad':
+            resultado = crudenfermedades.administrar_enfermedad(data)
+
+        elif self.path == '/cita':
+            if data['accion'] == 'nuevo-usuario':
+                data['idPaciente'] = paciente['id']
+                data['accion'] = 'nuevo'
+            resultado = crudcitas.administrar_citas(data)
+
+        elif self.path == '/tipo-examen':
+            resultado = crudtipoexamen.administrar_tipo_examen(data)
+
+        elif self.path == '/tipo-tratamiento':
+            resultado = crudtipotratamiento.administrar_tipo_tratamiento(data)
+
+        elif self.path == '/examen':
+            resultado = crudexamenes.administrar_examen(data)
+
+        elif self.path == '/tratamiento':
+            resultado = crudtratamientos.administrar_tratamiento(data)
+
+        elif self.path == '/consultar-personal-turno':
+            resultado = crudpersonal.consultar_personal_turno(data['idTurno'])
+
+        elif self.path == '/dev':
+            resultado = False
+            if data['token'] == token:
+                resultado = True
+            else:
+                resultado = False
             
         self.send_response(200)
         self.end_headers()

@@ -23,7 +23,7 @@
                 <div class="card text-white bg-secondary mb-3">
                     <div class="card-header"style="text-align: center;">(REGISTRO) DATOS PERSONALES</div>
                     <div class="card-body">
-                        <form id="frmRegistrar" data-accion="nuevo" data-codigousuario="0" class="row g-2">
+                        <form id="frmRegistrar" data-accion="nuevo-login" data-codigousuario="0" class="row g-2">
                            
                             <div class="col-auto">
                                 <label for="txtDui" class="">DUI</label>
@@ -85,7 +85,8 @@
         </script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
             integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-        <script>
+        <script type="module">
+            import { isDUI, isNIT } from './validarNitDui.js';
             function iniciarVideo() {
                 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
                 if (navigator.getUserMedia) {
@@ -112,33 +113,52 @@
                 canvas.height = height;
                 context.drawImage(video, 0, 0, width, height);
             }
-            function limpiarRegistro() {
-                $('#txtNombre').val('');
-                $('#txtDui').val('');
-                $('#txtNit').val('');
-                $('#txtSexoUsuario').val('');
-                $('#txtTelefonoUsuario').val('');
-                $('#txtEmailUsuario').val('');
-                $('#txtDireccion').val('');
-                $('#txtFechaNacimientoUsuario').val('');
-                var canvas = $('#previsualizarFoto')[0];
-                var context = canvas.getContext('2d');
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                $('#btnRegistrar').prop('disabled', true);
-                $('#btnRegistrar').css('border-color', 'red');
-                $('#btnCapturarRostroRegistrar').css('border-color', 'red');
-            }
+            
             $(document).ready(function(){
                 iniciarVideo();
-                $("#txtDui").on("change", function(){/** ... **/});
+                let hayfoto = false,
+                    hayDui = false,
+                    hayNit = false;
+                $("#txtDui").on("keyup", function(){
+                    if(isDUI($(this).val())){
+                        $("#txtDui").css("border-color", "green");
+                        $('#btnRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        hayDui = true;
+                    }else{
+                        $("#txtDui").css("border-color", "red");
+                        $('#btnRegistrar').css('border-color', 'red');
+                        $('#btnCapturarRostroRegistrar').css('border-color', 'red');
+                        hayDui = false;
+                    }
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
 
-                $("#txtNit").on("change", function(){/** ... **/});
+                $("#txtNit").on("keyup", function(){
+                    console.log(isNIT($(this).val()));
+                    if(isNIT($("#txtNit").val())){
+                        $("#txtNit").css("border-color", "green");
+                        $("#btnRegistrar").css('border-color', 'red');
+                        $("#btnCapturarRostroRegistrar").css('border-color', 'red');
+                        hayNit = true;
+                    }else{
+                        $("#txtNit").css("border-color", "red");
+                        $("#btnRegistrar").css('border-color', 'red');
+                        $("#btnCapturarRostroRegistrar").css('border-color', 'red');
+                        hayNit = false;
+                    }
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
+                });
 
                 $('#btnCapturarRostroRegistrar').on('click', function(){
                     capturarRostro();
-                    $('#btnRegistrar').prop('disabled', false);
                     $('#btnRegistrar').css('border-color', 'green');
                     $('#btnCapturarRostroRegistrar').css('border-color', 'green');
+                    hayfoto = true;
+                    console.log(hayDui && hayfoto && hayNit);
+                    $("#btnRegistrar").prop('disabled', !(hayDui && hayfoto && hayNit));
                 });
 
                 $('#frmRegistrar').submit(e => {
@@ -146,8 +166,8 @@
                     let canvas = $('#previsualizarFoto')[0],
                         context = canvas.getContext('2d');
                     let foto = [];
-                    for(i=0; i<200; i++){
-                        for(j=0; j< 200; j++){
+                    for(let i=0; i<200; i++){
+                        for(let j=0; j< 200; j++){
                             let imgdata = context.getImageData(j,i,1,1).data,
                                 valores = imgdata[0] + ',' + imgdata[1] + ',' + imgdata[2];
                             foto.push(valores);
@@ -163,7 +183,7 @@
                         direccion = $('#txtDireccion').val(),
                         fechaNacimiento = $('#txtFechaNacimientoUsuario').val(),
                         data = {
-                            'accion': 'nuevo',
+                            'accion': 'nuevo-login',
                             'id': 0,
                             'dui': dui,
                             'nit': nit,
